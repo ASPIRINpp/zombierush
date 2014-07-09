@@ -1,5 +1,13 @@
 (function() {
 
+
+    Core.Console = {
+        log: function(msg) {
+            if (Core.developMode)
+                console.log('App: ' + msg);
+        }
+    };
+
     Core.Helper = {
         extend: function(c1, c2) {
             for (var key in c2.prototype) {
@@ -9,7 +17,8 @@
             }
         },
         extendPrototype: function(child, parent) {
-            var F = function() {};
+            var F = function() {
+            };
             F.prototype = parent.prototype;
             child.prototype = new F();
             child.prototype.constructor = child;
@@ -23,20 +32,32 @@
         }
     };
 
-    Core.Console = {
-        log: function(msg) {
-            if (Core.developMode)
-                console.log('App: ' + msg);
+    Core.Time = {
+        lastTime: 0,
+        now: function() {
+            return Date.now();
+        },
+        getDt: function() {
+            return (this.now() - this.lastTime) / 1000.0;
+        },
+        dt: function() {
+            return this.getDt();
+        },
+        setLastTime: function(time) {
+            this.lastTime = time;
+        },
+        sLT: function(t) {
+            this.setLastTime(t);
         }
     };
 
+
     Core.Console.log('Init bootstrap module!');
-    
+
     // Load resource module
     Core.includeModule('resource');
-    // Load sprite module
-    Core.includeModule('sprite');
-    
-    
+
+    // Load storage module
+    Core.includeModule('storage');
 
 })();

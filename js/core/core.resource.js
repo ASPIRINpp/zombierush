@@ -17,9 +17,9 @@
     }
 
     function _load(url) {
-        
+
         Core.Console.log('Resource: download ' + url);
-        
+
         if (resourceCache[url]) {
             return resourceCache[url];
         }
@@ -28,12 +28,14 @@
             img.onload = function() {
                 resourceCache[url] = img;
 
+                Core.Console.log('Resource: download(' + url + ') done!');
                 if (isReady()) {
-                    Core.Console.log('Resource: download('+url+') done!');
+                    Core.Console.log('!Resource: all resources done!');
                     readyCallbacks.forEach(function(func) {
                         func();
                     });
                 }
+
             };
             resourceCache[url] = false;
             img.src = url;
@@ -60,14 +62,12 @@
         readyCallbacks.push(func);
     }
 
-    Resource = function() {};
-
-    Resource.prototype = {
+    Resource = {
         getCache: function() {
             console.log(resourceCache);
         },
         isset: function(url) {
-           return !(typeof resourceCache[url] === 'undefined');
+            return !(typeof resourceCache[url] === 'undefined');
         },
         load: load,
         get: get,
@@ -75,7 +75,17 @@
         isReady: isReady
     };
 
+    Resource.prototype = {
+         isset: function(url) {
+            return !(typeof resourceCache[url] === 'undefined');
+        },
+        load: load,
+        get: get,
+    };
 
-    Core.Console.log('Init module Core.Resource...');
-    Core.Resource = Resource;
+
+    Core.include('Resource', Resource);
+
+    // Load sprite module
+    Core.includeModule('sprite');
 })();

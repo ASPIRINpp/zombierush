@@ -1,111 +1,177 @@
-var zombie1, resourcePreLoader;
+// Если ничего нет - возвращаем обычный таймер
+window.requestAnimFrame = (function() {
+    return  window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            window.oRequestAnimationFrame ||
+            window.msRequestAnimationFrame ||
+            function(/* function */ callback, /* DOMElement */ element) {
+                window.setTimeout(callback, 1000 / 60);
+            };
+})();
 
-
-
+var Game = {
+    npc: {zombie1: null,
+        zombieRed: null, },
+    res: null,
+    lastTime: null,
+    updateLastTime: function() {
+        this.lastTime = Date.now();
+    }
+};
+//
+//
 var SPRITES = {
+    terrain: {
+        grass: '/sprites/terrain/grass.png',
+    },
     npc: {
         zombie: '/sprites/npc/zombie.png',
+        zombieRed: '/sprites/npc/zombierRed.png',
     }
 };
 
 
-(function(funcName, baseObj) {
-    // The public function name defaults to window.docReady
-    // but you can pass in your own object and own function name and those will be used
-    // if you want to put them in a different namespace
-    funcName = funcName || "docReady";
-    baseObj = baseObj || window;
-    var readyList = [];
-    var readyFired = false;
-    var readyEventHandlersInstalled = false;
-
-    // call this when the document is ready
-    // this function protects itself against being called more than once
-    function ready() {
-        if (!readyFired) {
-            // this must be set to true before we start calling callbacks
-            readyFired = true;
-            for (var i = 0; i < readyList.length; i++) {
-                // if a callback here happens to add new ready handlers,
-                // the docReady() function will see that it already fired
-                // and will schedule the callback to run right after
-                // this event loop finishes so all handlers will still execute
-                // in order and no new ones will be added to the readyList
-                // while we are processing the list
-                readyList[i].fn.call(window, readyList[i].ctx);
-            }
-            // allow any closures held by these functions to free
-            readyList = [];
-        }
-    }
-
-    function readyStateChange() {
-        if (document.readyState === "complete") {
-            ready();
-        }
-    }
-
-    // This is the one public interface
-    // docReady(fn, context);
-    // the context argument is optional - if present, it will be passed
-    // as an argument to the callback
-    baseObj[funcName] = function(callback, context) {
-        // if ready has already fired, then just schedule the callback
-        // to fire asynchronously, but right away
-        if (readyFired) {
-            setTimeout(function() {
-                callback(context);
-            }, 1);
-            return;
-        } else {
-            // add the function and context to the list
-            readyList.push({fn: callback, ctx: context});
-        }
-        // if document already ready to go, schedule the ready function to run
-        if (document.readyState === "complete") {
-            setTimeout(ready, 1);
-        } else if (!readyEventHandlersInstalled) {
-            // otherwise if we don't have event handlers installed, install them
-            if (document.addEventListener) {
-                // first choice is DOMContentLoaded event
-                document.addEventListener("DOMContentLoaded", ready, false);
-                // backup is window load event
-                window.addEventListener("load", ready, false);
-            } else {
-                // must be IE
-                document.attachEvent("onreadystatechange", readyStateChange);
-                window.attachEvent("onload", ready);
-            }
-            readyEventHandlersInstalled = true;
-        }
-    }
-})("docReady", window);
-
 Core.onReady(function() {
 
-    resourcePreLoader = new Core.Resource();
+    Game.res = Core.Resource;
 
-    console.log('Game loading...');
-
+    console.log('>>>>>>>>Game loading...');
     Core.includeJs('/js/game.npc.zombie.js');
+    Core.includeJs('/js/input.js');
 
-    resourcePreLoader.load([SPRITES.npc.zombie]);
+    // Create the canvas
+    var content = document.getElementById('content');
+    content.appendChild(Core.createCanvas());
+    // End Create the canvas
 
-    console.log('done!');
-
-
-// Create the canvas
-    var canvas = document.createElement("canvas");
-    var ctx = canvas.getContext("2d");
-    canvas.width = 800;
-    canvas.height = 600;
-    document.body.appendChild(canvas);
-
-
-// use an anonymous function
-    docReady(function() {
-        window.zombie1 = createZombie(ctx);
+    // Loading resouce
+    Game.res.load([
+        SPRITES.npc.zombie,
+        SPRITES.npc.zombieRed,
+        SPRITES.terrain.grass,
+    ]);
+    Game.res.onReady(function() {
+        console.log('>>>>>>>>Game loading...done!');
+        init();
     });
 
 
+
+
+
 });
+
+
+
+var sprite, lastTime, gameTime;
+var npc = [];
+function init() {
+//    Game.npc.zombie1 = new createZombie(Core.ctx, 'zombie1');
+    Game['terrainPattern'] = Core.ctx.createPattern(Game.res.get(SPRITES.terrain.grass), 'repeat');
+
+
+    // Render terrain
+//    Core.ctx.fillStyle = Game.terrainPattern;
+//    Core.ctx.fillRect(0, 0, Core.canvas.width, Core.canvas.height);
+
+//    sprite = new Core.Sprite(SPRITES.npc.zombie, [0, 0], [64, 64], [0, 1, 2, 3, 4, 5, 6]);
+
+    npc.push(createZombie(Core.ctx, 'zombie1'));
+//    npc.push(createZombie(Core.ctx, 'zombie2'));
+    main();
+
+
+}
+//
+
+function main() {
+    var now = Core.Time.now();
+    var dt = Core.Time.dt();
+
+
+
+    render();
+    update(dt);
+
+    Core.Time.sLT(now);
+    requestAnimFrame(main);
+}
+
+function render() {
+    Core.ctx.fillStyle = Game.terrainPattern;
+    Core.ctx.fillRect(0, 0, Core.canvas.width, Core.canvas.height);
+}
+
+
+function update(dt) {
+    handleInput(dt);
+    for (var k in npc)
+    {
+        renderEntity(npc[k]);
+
+    }
+
+}
+
+function renderEntity(npc) {
+
+    Core.ctx.save();
+    Core.ctx.translate(npc.getPos(0), npc.getPos(1));
+    Core.Sprite.renderSprite(Core.ctx, npc.getSprite());
+    Core.ctx.restore();
+}
+
+//function updateEntities(dt) {
+//
+//
+//    // Update all the enemies
+//    for (var i = 0; i < Game.npc.length; i++) {
+////        Game.npc[i].pos[0] -= enemySpeed * dt;
+//        Game.npc[i].incPosX(dt);
+//        Game.npc[i].sprite.update(dt);
+//
+////        // Remove if offscreen
+////        if (Game.npc[i].pos[0] + Game.npc[i].sprite.size[0] < 0) {
+////            Game.npc.splice(i, 1);
+////            i--;
+////        }
+//    }
+//}
+//// Draw everything
+
+//;
+//
+//function renderEntities(list) {
+//    for (var i = 0; i < list.length; i++) {
+//        renderEntity(list[i]);
+//    }
+//}
+//
+
+//// Reset game to original state
+//function reset() {
+////      player.pos = [50, canvas.height / 2];
+//}
+//;
+
+function handleInput(dt) {
+    if (input.isDown('DOWN') || input.isDown('s')) {
+        npc[0].move('bottom');
+    }
+
+    if (input.isDown('UP') || input.isDown('w')) {
+        npc[0].move('top');
+    }
+
+    if (input.isDown('LEFT') || input.isDown('a')) {
+        npc[0].move('left');
+    }
+
+    if (input.isDown('RIGHT') || input.isDown('d')) {
+        npc[0].move('right');
+    }
+
+
+}
+
