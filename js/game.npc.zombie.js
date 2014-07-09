@@ -5,7 +5,7 @@ function createZombie(ctx, uid) {
 
     var _self = {
         health: 100,
-        speed: 20,
+        speed: 14,
         tile: 'Zombie',
         resource: SPRITES.npc.zombie,
         pos:[0,0],
@@ -16,6 +16,12 @@ function createZombie(ctx, uid) {
             left: 2,
             top: 3,
             die: 6
+        },
+        onOutX: function() {
+            _self.pos[0] = 0;
+        },
+        onOutY: function() {
+            _self.pos[1] = 0;
         },
         move: function(v) {
             var dt = Core.Time.dt();
@@ -40,6 +46,11 @@ function createZombie(ctx, uid) {
             }
             Core.Sprite.updateSprite(_self.sprite,dt);
             
+            if(typeof _self.onOutX !== 'undefined' && (_self.pos[0] > Core.canvas.width || _self.pos[0] < -150))
+                _self.onOutX();
+            if(typeof _self.onOutY !== 'undefined' && (_self.pos[1] > Core.canvas.height || _self.pos[1] < -150))
+                _self.onOutY();
+                
 
         }
     };

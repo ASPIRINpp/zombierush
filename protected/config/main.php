@@ -7,7 +7,7 @@
 // CWebApplication properties can be configured here.
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'My Web Application',
+	'name'=>'Zoombie Rush',
         'language' => 'ru',
         'timeZone' => 'Europe/Moscow',
 	// preloading 'log' component

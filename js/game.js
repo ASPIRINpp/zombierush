@@ -24,6 +24,9 @@ var Game = {
 var SPRITES = {
     terrain: {
         grass: '/sprites/terrain/grass.png',
+        dirt: '/sprites/terrain/dirt.png',
+        grass2: '/sprites/terrain/grass2.png',
+        grass3: '/sprites/terrain/grass3.png',
     },
     npc: {
         zombie: '/sprites/npc/zombie.png',
@@ -40,7 +43,7 @@ Core.onReady(function() {
     console.log('>>>>>>>>Game loading...');
     Core.includeJs('/js/game.npc.marine.js');
     Core.includeJs('/js/game.npc.zombie.js');
-    
+
     Core.includeJs('/js/input.js');
 
     // Create the canvas
@@ -52,11 +55,17 @@ Core.onReady(function() {
     Game.res.load([
         SPRITES.npc.zombie,
         SPRITES.npc.zombieRed,
-        SPRITES.terrain.grass,
+        SPRITES.terrain.grass3,
     ]);
     Game.res.onReady(function() {
         console.log('>>>>>>>>Game loading...done!');
         init();
+
+        document.getElementById('content').onclick = function(e) {
+            console.log('[' + e.layerX + ', ' + e.layerY + '],');
+        };
+
+
     });
 
 
@@ -70,9 +79,14 @@ Core.onReady(function() {
 var sprite, lastTime, gameTime;
 var npc = [];
 function init() {
-    Game['terrainPattern'] = Core.ctx.createPattern(Game.res.get(SPRITES.terrain.grass), 'repeat');
+    var now = Core.Time.now();
+    Core.Time.setLastTime(now);
+    Core.Time.dt();
+    Game['terrainPattern'] = Core.ctx.createPattern(Game.res.get(SPRITES.terrain.grass3), 'repeat');
 
     npc.push(createZombie(Core.ctx, 'zombie1'));
+    npc.push(createZombie(Core.ctx, 'zombie2'));
+    npc.push(createZombie(Core.ctx, 'zombie3'));
 //    npc.push(createMarine(Core.ctx, 'marine1'));
 
     main();
@@ -103,7 +117,7 @@ function render() {
 function update(dt) {
 
     handleInput(dt);
-
+    updateEntities(dt);
 
 
     var olNpc = npc;
@@ -143,6 +157,137 @@ function renderEntity(npc) {
 }
 
 
+
+
+
+
+function drawPathLines(path, color) {
+
+    for (var k in path)
+    {
+        Core.ctx.beginPath();
+        if (typeof path[k - 1] !== 'undefined')
+            Core.ctx.moveTo(path[k - 1][0], path[k - 1][1]);
+        else
+            Core.ctx.moveTo(path[k][0], path[k][1]);
+
+        Core.ctx.lineTo(path[k][0], path[k][1]);
+        Core.ctx.strokeStyle = color;
+        Core.ctx.stroke();
+    }
+
+}
+var pathNpc = {};
+function updateEntitie(npcId, path) {
+//    var npcId = 0;
+    if (typeof pathNpc[npcId] === 'undefined')
+        pathNpc[npcId] = 0;
+//    
+//    console.log(Math.floor(npc[npcId].getPos(0)), Math.floor(npc[npcId].getPos(1)));
+    if (pathNpc[npcId] != -1)
+    {
+        var px = Math.floor(npc[npcId].getPos(0)) + Math.floor(npc[npcId].getSprite().size[0] / 2);
+        var py = Math.floor(npc[npcId].getPos(1)) + npc[npcId].getSprite().size[1] - 5;
+
+
+        switch (true) {
+
+            case (py == path[pathNpc[npcId]][1] && px == path[pathNpc[npcId]][0]):
+                if (typeof path[pathNpc[npcId] + 1] !== 'undefined')
+                {
+                    console.log('NPC pos[' + pathNpc[npcId] + ']:');
+                    console.log(px, py);
+                    console.log('NPC ideal pos:');
+                    console.log(path[pathNpc[npcId]]);
+
+                    pathNpc[npcId]++;
+
+                }
+                else
+                {
+//                    pathNpc[npcId] = -1;
+                    pathNpc[npcId] = 0;
+                }
+
+                break;
+            case (px < path[pathNpc[npcId]][0]):
+                npc[npcId].move('right');
+                break;
+            case (px > path[pathNpc[npcId]][0]):
+                npc[npcId].move('left');
+                break;
+            case (py < path[pathNpc[npcId]][1]):
+                npc[npcId].move('bottom');
+                break;
+            case (py > path[pathNpc[npcId]][1]):
+                npc[npcId].move('top');
+                break;
+        }
+    }
+}
+var path2 = [
+    [83, 50],
+    [215, 50],
+    [215, 350],
+    [365, 350],
+    [365, 131],
+    [676, 130],
+];
+var path1 = [
+    [30, 0],
+    [30, 316],
+    [310, 314],
+    [310, 185],
+    [435, 185],
+    [435, 322],
+    [691, 319]
+];
+var path3 = [
+    [668, 82],
+    [657, 415],
+    [430, 409],
+    [453, 62],
+    [329, 51],
+    [321, 379],
+    [128, 380]
+];
+function updateEntities(dt) {
+
+
+    drawPathLines(path1, 'blue');
+    drawPathLines(path2, 'red');
+    drawPathLines(path3, 'yellow');
+    updateEntitie(0, path1);
+    updateEntitie(1, path2);
+    updateEntitie(2, path3);
+
+//    if
+//    {
+//    npc[0].move('bottom');
+//    }
+//    else
+//            if (npc[0].getPos(1) > 300)
+//    {
+//        npc[0].move('right');
+//    } else if (npc[0].getPos(0) > 250)
+//    {
+//        npc[0].move('top');
+//    }
+//    // Update all the enemies
+//    for (var i = 0; i < enemies.length; i++) {
+//        enemies[i].pos[0] -= enemySpeed * dt;
+//        enemies[i].sprite.update(dt);
+//
+//        // Remove if offscreen
+//        if (enemies[i].pos[0] + enemies[i].sprite.size[0] < 0) {
+//            enemies.splice(i, 1);
+//            i--;
+//        }
+//    }
+
+
+}
+
 var focusZombie = 0;
 var focusZombie2 = 0;
 
@@ -166,7 +311,7 @@ function handleInput(dt) {
     }
 
 
-    
+
 
 
     if (input.isDown('DOWN') || input.isDown('g')) {
