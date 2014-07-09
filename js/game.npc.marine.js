@@ -1,14 +1,14 @@
-function createZombie(ctx, uid) {
+function createMarine(ctx, uid) {
 
     // UID
     uid = (typeof uid === 'undefined') ? Math.random() : uid;
 
     var _self = {
         health: 100,
-        speed: 20,
-        tile: 'Zombie',
-        resource: SPRITES.npc.zombie,
-        pos:[0,0],
+        speed: 5,
+        tile: 'Marine',
+        resource: SPRITES.npc.marine,
+        pos: [0, 0],
         sprite: null,
         spriteLevels: {
             bottom: 0,
@@ -23,7 +23,7 @@ function createZombie(ctx, uid) {
                 case 'top':
                     _self.sprite.level = _self.spriteLevels.top;
                     _self.pos[1] -= _self.speed * dt;
-                    
+
                     break;
                 case 'bottom':
                     _self.sprite.level = _self.spriteLevels.bottom;
@@ -38,14 +38,14 @@ function createZombie(ctx, uid) {
                     _self.pos[0] += _self.speed * dt;
                     break;
             }
-            Core.Sprite.updateSprite(_self.sprite,dt);
-            
+            Core.Sprite.updateSprite(_self.sprite, dt);
+
 
         }
     };
 
     // Create sprite data
-    _self.sprite = Core.Sprite.createSprite(_self.resource, [0, 0], _self.spriteLevels, [64, 64], _self.speed, [0, 1, 2, 3, 4, 5, 6]);
+    _self.sprite = Core.Sprite.createSprite(_self.resource, [0, 0], _self.spriteLevels, [30, 40], _self.speed, [0, 1, 2, 3, 4, 5]);
 
     return {
         move: function(v) {

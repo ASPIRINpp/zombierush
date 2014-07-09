@@ -40,16 +40,20 @@
             };
         },
         renderSprite: function(ctx, sprite) {
+            
             if (sprite.speed > 0) {
                 var max = sprite.frs.length;
                 var idx = Math.floor(sprite._index);
+                
                 sprite.fr = sprite.frs[idx % max];
-
-                if (sprite.once && idx >= max) {
-                    sprite.done = true;
-
-                    return;
-                }
+//                console.log(idx % max);
+//                if (sprite.done)
+//                {
+                    if (sprite.once && idx >= max) {
+                        sprite.done = true;
+                        return;
+                    }
+//                }
             }
             else {
                 sprite.fr = 0;

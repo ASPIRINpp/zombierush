@@ -8,7 +8,8 @@
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'name'=>'My Web Application',
-
+        'language' => 'ru',
+        'timeZone' => 'Europe/Moscow',
 	// preloading 'log' component
 	'preload'=>array('log'),
 
