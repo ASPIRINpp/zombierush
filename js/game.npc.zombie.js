@@ -1,82 +1,44 @@
-function createZombie(ctx, uid) {
-
-    // UID
-    uid = (typeof uid === 'undefined') ? Math.random() : uid;
-
-    var _self = {
+function createZombie(title) {
+    var uid = Core.Npc.add({
+        title: title,
         health: 100,
         speed: 14,
-        tile: 'Zombie',
-        resource: SPRITES.npc.zombie,
-        pos:[0,0],
-        sprite: null,
-        spriteLevels: {
-            bottom: 0,
-            right: 1,
-            left: 2,
-            top: 3,
-            die: 6
+        sprite: {
+            resourceUrl: SPRITES.npc.zombie,
+            frames: [0, 1, 2, 3, 4, 5, 6]
         },
-        onOutX: function() {
-            _self.pos[0] = 0;
-        },
-        onOutY: function() {
-            _self.pos[1] = 0;
-        },
-        move: function(v) {
-            var dt = Core.Time.dt();
-            switch (v) {
-                case 'top':
-                    _self.sprite.level = _self.spriteLevels.top;
-                    _self.pos[1] -= _self.speed * dt;
-                    
-                    break;
-                case 'bottom':
-                    _self.sprite.level = _self.spriteLevels.bottom;
-                    _self.pos[1] += _self.speed * dt;
-                    break;
-                case 'left':
-                    _self.sprite.level = _self.spriteLevels.left;
-                    _self.pos[0] -= _self.speed * dt;
-                    break;
-                case 'right':
-                    _self.sprite.level = _self.spriteLevels.right;
-                    _self.pos[0] += _self.speed * dt;
-                    break;
-            }
-            Core.Sprite.updateSprite(_self.sprite,dt);
-            
-            if(typeof _self.onOutX !== 'undefined' && (_self.pos[0] > Core.canvas.width || _self.pos[0] < -150))
-                _self.onOutX();
-            if(typeof _self.onOutY !== 'undefined' && (_self.pos[1] > Core.canvas.height || _self.pos[1] < -150))
-                _self.onOutY();
-                
+        pos: [25, 25]
+    });
 
+    var zombie = Core.Npc.get(uid);
+
+    // Add moving animation
+    zombie.animation.move = function(to) {
+        Core.Npc.Animation.get('standartMove')(zombie, to, Core.Time.dt());
+    };
+
+    var says = [
+        'Argghhh!',
+        'Braaainss...',
+        'Whe-e brainssss...',
+        'To be, or not to be...',
+    ];
+
+    // Add events
+    zombie.events.afterMove = function(npc, to, dt) {
+        // Out of map
+        Core.Npc.Animation.get('standartOutMapAction')(npc);
+
+        // Funy argghhh
+        if (CH.randInt(0, 500) === CH.randInt(0, 500)) {
+            var text = says[CH.randInt(0, says.length-1)];
+            Core.Render.addObject((1000 * 3), function() {
+                Core.Render.renderBallon(npc.title + ': ' + text, npc.pos, Core.ctx);
+            });
+
+            console.info('%s: %s', npc.title, text);
         }
     };
 
-    // Create sprite data
-    _self.sprite = Core.Sprite.createSprite(_self.resource, [0, 0], _self.spriteLevels, [64, 64], _self.speed, [0, 1, 2, 3, 4, 5, 6]);
-
-    return {
-        move: function(v) {
-            _self.move(v);
-        },
-        update: function(dt) {
-//            _self.sprite.updateSprite(dt);
-        },
-        getPos: function(k) {
-            return (typeof k !== 'undefined') ? _self.pos[k] : _self.pos;
-        },
-        setPos: function(pos) {
-            _self.pos = pos;
-        },
-        getSprite: function() {
-            return _self.sprite;
-        },
-        render: function() {
-            _self.sprite.render(Core.ctx, _self.spriteLevels.top);
-        }
-
-    };
+    return uid;
 }

@@ -1,26 +1,5 @@
-// Если ничего нет - возвращаем обычный таймер
-window.requestAnimFrame = (function() {
-    return  window.requestAnimationFrame ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame ||
-            window.oRequestAnimationFrame ||
-            window.msRequestAnimationFrame ||
-            function(/* function */ callback, /* DOMElement */ element) {
-                window.setTimeout(callback, 1000 / 60);
-            };
-})();
 
-var Game = {
-    npc: {zombie1: null,
-        zombieRed: null, },
-    res: null,
-    lastTime: null,
-    updateLastTime: function() {
-        this.lastTime = Date.now();
-    }
-};
-//
-//
+
 var SPRITES = {
     terrain: {
         grass: '/sprites/terrain/grass.png',
@@ -35,13 +14,21 @@ var SPRITES = {
     }
 };
 
+var Game = {
+    res: null,
+    lastTime: null,
+    updateLastTime: function() {
+        this.lastTime = Date.now();
+    }
+};
+
 
 Core.onReady(function() {
 
     Game.res = Core.Resource;
 
+    CC.grpC('Game loading ');
     console.log('>>>>>>>>Game loading...');
-    Core.includeJs('/js/game.npc.marine.js');
     Core.includeJs('/js/game.npc.zombie.js');
 
     Core.includeJs('/js/input.js');
@@ -59,6 +46,7 @@ Core.onReady(function() {
     ]);
     Game.res.onReady(function() {
         console.log('>>>>>>>>Game loading...done!');
+        CC.grpE();
         init();
 
         document.getElementById('content').onclick = function(e) {
@@ -71,29 +59,57 @@ Core.onReady(function() {
 
 
 
-
 });
 
+var path2 = [
+    [83, 50],
+    [215, 50],
+    [215, 350],
+    [365, 350],
+    [365, 131],
+    [676, 130],
+];
+var path1 = [
+    [30, 0],
+    [30, 316],
+    [310, 314],
+    [310, 185],
+    [435, 185],
+    [435, 322],
+    [691, 319]
+];
+var path3 = [
+    [668, 82],
+    [657, 415],
+    [430, 409],
+    [453, 62],
+    [329, 51],
+    [321, 379],
+    [128, 380]
+];
 
-
-var sprite, lastTime, gameTime;
-var npc = [];
+//var sprite, lastTime, gameTime;
+//var npc = [];
+var playerName;
 function init() {
     var now = Core.Time.now();
     Core.Time.setLastTime(now);
     Core.Time.dt();
     Game['terrainPattern'] = Core.ctx.createPattern(Game.res.get(SPRITES.terrain.grass3), 'repeat');
 
-    npc.push(createZombie(Core.ctx, 'zombie1'));
-    npc.push(createZombie(Core.ctx, 'zombie2'));
-    npc.push(createZombie(Core.ctx, 'zombie3'));
+//    npc.push(createZombie(Core.ctx, 'zombie1'));
+//    npc.push(createZombie(Core.ctx, 'zombie2'));
+//    npc.push(createZombie(Core.ctx, 'zombie3'));
 //    npc.push(createMarine(Core.ctx, 'marine1'));
+    playerName = createZombie('Bob');
+    console.info('Create player %s', playerName);
 
     main();
 
 
 }
 //
+
 
 function main() {
     var now = Core.Time.now();
@@ -117,17 +133,28 @@ function render() {
 function update(dt) {
 
     handleInput(dt);
-    updateEntities(dt);
+
+    Core.Render.go();
+
+//    updateEntities(dt);
 
 
-    var olNpc = npc;
-    sorting();
-    for (var k in npc)
-    {
-        renderEntity(npc[k]);
-    }
-    npc = olNpc;
+//    var olNpc = npc;
+//    sorting();
+//    for (var k in npc)
+//    {
+//        renderEntity(npc[k]);
+//    }
+//    npc = olNpc;
 
+}
+
+function renderEntity(npc) {
+
+    Core.ctx.save();
+    Core.ctx.translate(npc.getPos(0), npc.getPos(1));
+    Core.Sprite.renderSprite(Core.ctx, npc.getSprite());
+    Core.ctx.restore();
 }
 
 function sorting() {
@@ -147,15 +174,6 @@ function sorting() {
 
     npc = newNpc;
 }
-
-function renderEntity(npc) {
-
-    Core.ctx.save();
-    Core.ctx.translate(npc.getPos(0), npc.getPos(1));
-    Core.Sprite.renderSprite(Core.ctx, npc.getSprite());
-    Core.ctx.restore();
-}
-
 
 
 
@@ -195,10 +213,12 @@ function updateEntitie(npcId, path) {
             case (py == path[pathNpc[npcId]][1] && px == path[pathNpc[npcId]][0]):
                 if (typeof path[pathNpc[npcId] + 1] !== 'undefined')
                 {
+                    CC.grpC('Getted point ' + npcId);
                     console.log('NPC pos[' + pathNpc[npcId] + ']:');
                     console.log(px, py);
                     console.log('NPC ideal pos:');
                     console.log(path[pathNpc[npcId]]);
+                    CC.grpE('');
 
                     pathNpc[npcId]++;
 
@@ -225,111 +245,37 @@ function updateEntitie(npcId, path) {
         }
     }
 }
-var path2 = [
-    [83, 50],
-    [215, 50],
-    [215, 350],
-    [365, 350],
-    [365, 131],
-    [676, 130],
-];
-var path1 = [
-    [30, 0],
-    [30, 316],
-    [310, 314],
-    [310, 185],
-    [435, 185],
-    [435, 322],
-    [691, 319]
-];
-var path3 = [
-    [668, 82],
-    [657, 415],
-    [430, 409],
-    [453, 62],
-    [329, 51],
-    [321, 379],
-    [128, 380]
-];
+
 function updateEntities(dt) {
-
-
     drawPathLines(path1, 'blue');
     drawPathLines(path2, 'red');
     drawPathLines(path3, 'yellow');
     updateEntitie(0, path1);
     updateEntitie(1, path2);
     updateEntitie(2, path3);
-
-//    if
-//    {
-//    npc[0].move('bottom');
-//    }
-//    else
-//            if (npc[0].getPos(1) > 300)
-//    {
-//        npc[0].move('right');
-//    } else if (npc[0].getPos(0) > 250)
-//    {
-//        npc[0].move('top');
-//    }
-//    // Update all the enemies
-//    for (var i = 0; i < enemies.length; i++) {
-//        enemies[i].pos[0] -= enemySpeed * dt;
-//        enemies[i].sprite.update(dt);
-//
-//        // Remove if offscreen
-//        if (enemies[i].pos[0] + enemies[i].sprite.size[0] < 0) {
-//            enemies.splice(i, 1);
-//            i--;
-//        }
-//    }
-
-
 }
 
-var focusZombie = 0;
-var focusZombie2 = 0;
+
 
 function handleInput(dt) {
 
+    var player = Core.Npc.get(playerName);
 
     if (input.isDown('DOWN') || input.isDown('s')) {
-        npc[focusZombie].move('bottom');
+        player.animation.move('bottom');
     }
 
     if (input.isDown('UP') || input.isDown('w')) {
-        npc[focusZombie].move('top');
+        player.animation.move('top');
     }
 
     if (input.isDown('LEFT') || input.isDown('a')) {
-        npc[focusZombie].move('left');
+        player.animation.move('left');
     }
 
     if (input.isDown('RIGHT') || input.isDown('d')) {
-        npc[focusZombie].move('right');
+        player.animation.move('right');
     }
-
-
-
-
-
-    if (input.isDown('DOWN') || input.isDown('g')) {
-        npc[focusZombie2].move('bottom');
-    }
-
-    if (input.isDown('UP') || input.isDown('t')) {
-        npc[focusZombie2].move('top');
-    }
-
-    if (input.isDown('LEFT') || input.isDown('f')) {
-        npc[focusZombie2].move('left');
-    }
-
-    if (input.isDown('RIGHT') || input.isDown('h')) {
-        npc[focusZombie].move('right');
-    }
-
 
 }
 

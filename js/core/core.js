@@ -12,7 +12,9 @@ var Core = {};
 
     Core = {
         version: '0.1',
-        developMode: false,
+        developMode: true,
+        forceMode: true,
+        aliasMode: true,
         canvas: {
             width: 800,
             height: 600
@@ -38,11 +40,8 @@ var Core = {};
         includeModule: function(name, outOfTurn) {
             outOfTurn = outOfTurn ? true : false;
             if (!outOfTurn)
-            {
                 loadingIncludes++;
-                console.log('+++loadingIncludes[' + name + ']: ' + loadingIncludes);
-            }
-            this.includeJs(CORE_PATH + '/' + CORE_PREFIX + MIN_PREFIX + name + '.js');
+            this.includeJs(CORE_PATH + '/' + CORE_PREFIX + MIN_PREFIX + name + '.js', Core.forceMode);
         },
         onReady: function(code) {
             _onReady.push(code);
@@ -66,7 +65,6 @@ var Core = {};
         },
         include: function(name, module, on) {
             loadingIncludes--;
-            Core.Console.log('---loadingIncludes: ' + loadingIncludes);
             Core.Console.log('Init module Core.' + name + '...');
             Core[name] = module;
             if (typeof on !== 'undefined')

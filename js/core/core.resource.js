@@ -43,7 +43,7 @@
     }
 
     function get(url) {
-        Core.Console.log('Resource: get ' + url);
+//        Core.Console.log('Resource: get ' + url);
         return resourceCache[url];
     }
 
