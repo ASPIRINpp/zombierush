@@ -85,13 +85,13 @@
 
                 sprite.fr = sprite.frs[idx % max];
 //                console.log(idx % max);
-//                if (sprite.done)
-//                {
-                if (sprite.once && idx >= max) {
-                    sprite.done = true;
-                    return;
+                if (sprite.done)
+                {
+                    if (sprite.once && idx >= max) {
+                        sprite.done = true;
+                        return;
+                    }
                 }
-//                }
             }
             else {
                 sprite.fr = 0;

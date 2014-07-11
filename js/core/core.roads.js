@@ -44,7 +44,7 @@
                 Core.ctx.moveTo(path[k - 1][0], path[k - 1][1]);
             else
                 Core.ctx.moveTo(path[k][0], path[k][1]);
-            
+
             Core.ctx.lineWidth = 0.5;
             Core.ctx.lineTo(path[k][0], path[k][1]);
             Core.ctx.strokeStyle = color;
@@ -118,11 +118,15 @@
         },
         go: function() {
             for (var npcId in _npcRoads)
-                moveNPC(npcId, _npcRoads[npcId]);
-
+                if (_npcRoads[npcId] !== null)
+                    moveNPC(npcId, _npcRoads[npcId]);
         },
         drawPathRoad: function(roadId, color) {
             drawPathLines(this.get(roadId), color);
+        },
+        detach: function(npcId) {
+            if (Core.Helper.isset(_npcRoads[npcId]))
+                _npcRoads[npcId] = null;
         }
     };
 

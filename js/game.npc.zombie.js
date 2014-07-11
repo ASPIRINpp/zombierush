@@ -16,6 +16,14 @@ function createZombie(title, pos) {
     zombie.animation.move = function(to) {
         Core.Npc.Animation.get('standartMove')(zombie, to, Core.Time.dt());
     };
+    
+    // Add die animation
+    zombie.animation.die = function(to) {
+        Core.Roads.detach(uid);
+        zombie.health = 0;
+        zombie.sprite.fr = 0;
+        Core.Npc.Animation.get('standartDie')(zombie, Core.Time.dt());
+    };
 
     var says = [
         'Argghhh!',

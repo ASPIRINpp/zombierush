@@ -12,6 +12,21 @@
                 npc.events.beforeMove(npc, to, dt);
             }
         },
+        beforeDie: function(npc, dt) {
+        },
+        afterDie: function(npc, dt) {
+            if (npc.sprite.fr !== 6)
+            {
+                this.standartDie(npc, dt);
+            }
+        },
+        standartDie: function(npc, dt) {
+            _methods.beforeDie(npc, dt);
+            
+            npc.sprite.level = npc.sprite.levels.die;
+            //            npc.sprite.once = true;
+            _methods.afterDie(npc, dt);
+        },
         standartMove: function(npc, to, dt) {
             _methods.beforeMove(npc, to, dt);
             switch (to) {
@@ -34,7 +49,7 @@
                     npc.pos[0] += npc.speed * dt;
                     break;
             }
-            
+
             if (!CH.isset(npc.sprite) || !CH.isset(npc.sprite._index))
             {
                 console.log('npc>>>');
