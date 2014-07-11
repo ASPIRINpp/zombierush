@@ -97,10 +97,6 @@ function init() {
     Core.Time.dt();
     Game['terrainPattern'] = Core.ctx.createPattern(Game.res.get(SPRITES.terrain.grass3), 'repeat');
 
-//    npc.push(createZombie(Core.ctx, 'zombie1'));
-//    npc.push(createZombie(Core.ctx, 'zombie2'));
-//    npc.push(createZombie(Core.ctx, 'zombie3'));
-//    npc.push(createMarine(Core.ctx, 'marine1'));
     playerName = createZombie('Bob');
     console.info('Create player %s', playerName);
 
