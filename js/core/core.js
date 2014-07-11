@@ -17,9 +17,8 @@ var Core = {};
         aliasMode: true,
         fps: {
             current: 0,
-            filter: 50,
+            filter: 0,
             hits:0,
-            
         },
         canvas: {
             width: 800,

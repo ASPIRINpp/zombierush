@@ -6,6 +6,22 @@
         _storage.push({expired: time, lambda: lambda});
     }
 
+    function sorting(sprites) {
+        var sortable = [];
+        
+        for (var k in sprites)
+            sortable.push([k, sprites[k].posOnMap[1]]);
+        sortable.sort(function(a, b) {return a[1] - b[1]});
+
+        var result = [];
+        for (var k in sortable) {
+            result.push(sortable[k][0]);
+        }
+
+        return result;
+    }
+
+
     var _methods = {
         renderBaloon: function(text, pos, ctx) {
             // Get canvas
@@ -21,15 +37,19 @@
             Core.Helper.calcFps();
             // Get canvas
             ctx = Core.Helper.isset(ctx) ? ctx : Core.ctx;
+            
             // Get sprites
             var sprites = Core.Sprite.getAll();
+            
+            // Sorting
+            var sortingSprites = sorting(sprites);
 
             // Render!
-            for (var k in sprites)
+            for (var k in sortingSprites)
             {
                 Core.ctx.save();
-                Core.ctx.translate(sprites[k].posOnMap[0], sprites[k].posOnMap[1]);
-                Core.Sprite.render(ctx, sprites[k]);
+                Core.ctx.translate(sprites[sortingSprites[k]].posOnMap[0], sprites[sortingSprites[k]].posOnMap[1]);
+                Core.Sprite.render(ctx, sprites[sortingSprites[k]]);
                 Core.ctx.restore();
             }
 
