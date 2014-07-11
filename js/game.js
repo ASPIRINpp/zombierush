@@ -30,7 +30,7 @@ Core.onReady(function() {
     CC.grpC('Game loading ');
     console.log('>>>>>>>>Game loading...');
     Core.includeJs('/js/game.npc.zombie.js');
-
+    Core.includeJs('/js/game.npc.redZombie.js');
     Core.includeJs('/js/input.js');
 
     // Create the canvas
@@ -44,6 +44,7 @@ Core.onReady(function() {
         SPRITES.npc.zombieRed,
         SPRITES.terrain.grass3,
     ]);
+
     Game.res.onReady(function() {
         console.log('>>>>>>>>Game loading...done!');
         CC.grpE();
@@ -61,32 +62,6 @@ Core.onReady(function() {
 
 });
 
-var path2 = [
-    [83, 50],
-    [215, 50],
-    [215, 350],
-    [365, 350],
-    [365, 131],
-    [676, 130],
-];
-var path1 = [
-    [30, 0],
-    [30, 316],
-    [310, 314],
-    [310, 185],
-    [435, 185],
-    [435, 322],
-    [691, 319]
-];
-var path3 = [
-    [668, 82],
-    [657, 415],
-    [430, 409],
-    [453, 62],
-    [329, 51],
-    [321, 379],
-    [128, 380]
-];
 
 //var sprite, lastTime, gameTime;
 //var npc = [];
@@ -97,10 +72,27 @@ function init() {
     Core.Time.dt();
     Game['terrainPattern'] = Core.ctx.createPattern(Game.res.get(SPRITES.terrain.grass3), 'repeat');
 
+    // Add paths roads
+    Core.Roads.addPath('path1', [[30, 0], [30, 316], [310, 314], [310, 185], [435, 185], [435, 322], [691, 319]]);
+    Core.Roads.addPath('path2', [[83, 50], [215, 50], [215, 350], [365, 350], [365, 131], [676, 130]]);
+    Core.Roads.addPath('path3', [[668, 82], [657, 415], [430, 409], [453, 62], [329, 51], [321, 379], [128, 380]]);
+
     playerName = createZombie('Bob');
     console.info('Create player %s', playerName);
 
+    Core.Roads.applyRoadToNpc(playerName, 'path2');
+    Core.Roads.applyRoadToNpc(createZombie('Alice'), 'path1');
+
     main();
+
+    var fpsOut = document.getElementById('fps');
+    var npcCount = document.getElementById('npcCount');
+    setInterval(function() 
+    {
+        fpsOut.innerHTML = Core.fps.current;
+        npcCount.innerHTML = Core.Npc.getAll().length;
+        
+    }, 1000);
 
 
 }
@@ -110,7 +102,6 @@ function init() {
 function main() {
     var now = Core.Time.now();
     var dt = Core.Time.dt();
-
 
 
     render();
@@ -128,30 +119,22 @@ function render() {
 
 function update(dt) {
 
+
+
+    
     handleInput(dt);
 
+    // Draw road paths
+    Core.Roads.drawPathRoad('path1', 'black');
+    Core.Roads.drawPathRoad('path2', 'red');
+    Core.Roads.drawPathRoad('path3', 'blue');
+
     Core.Render.go();
+    Core.Roads.go();
 
-//    updateEntities(dt);
-
-
-//    var olNpc = npc;
-//    sorting();
-//    for (var k in npc)
-//    {
-//        renderEntity(npc[k]);
-//    }
-//    npc = olNpc;
 
 }
 
-function renderEntity(npc) {
-
-    Core.ctx.save();
-    Core.ctx.translate(npc.getPos(0), npc.getPos(1));
-    Core.Sprite.renderSprite(Core.ctx, npc.getSprite());
-    Core.ctx.restore();
-}
 
 function sorting() {
     var sortable = [];
@@ -173,83 +156,6 @@ function sorting() {
 
 
 
-
-
-function drawPathLines(path, color) {
-
-    for (var k in path)
-    {
-        Core.ctx.beginPath();
-        if (typeof path[k - 1] !== 'undefined')
-            Core.ctx.moveTo(path[k - 1][0], path[k - 1][1]);
-        else
-            Core.ctx.moveTo(path[k][0], path[k][1]);
-
-        Core.ctx.lineTo(path[k][0], path[k][1]);
-        Core.ctx.strokeStyle = color;
-        Core.ctx.stroke();
-    }
-
-}
-var pathNpc = {};
-function updateEntitie(npcId, path) {
-//    var npcId = 0;
-    if (typeof pathNpc[npcId] === 'undefined')
-        pathNpc[npcId] = 0;
-//    
-//    console.log(Math.floor(npc[npcId].getPos(0)), Math.floor(npc[npcId].getPos(1)));
-    if (pathNpc[npcId] != -1)
-    {
-        var px = Math.floor(npc[npcId].getPos(0)) + Math.floor(npc[npcId].getSprite().size[0] / 2);
-        var py = Math.floor(npc[npcId].getPos(1)) + npc[npcId].getSprite().size[1] - 5;
-
-
-        switch (true) {
-
-            case (py == path[pathNpc[npcId]][1] && px == path[pathNpc[npcId]][0]):
-                if (typeof path[pathNpc[npcId] + 1] !== 'undefined')
-                {
-                    CC.grpC('Getted point ' + npcId);
-                    console.log('NPC pos[' + pathNpc[npcId] + ']:');
-                    console.log(px, py);
-                    console.log('NPC ideal pos:');
-                    console.log(path[pathNpc[npcId]]);
-                    CC.grpE('');
-
-                    pathNpc[npcId]++;
-
-                }
-                else
-                {
-//                    pathNpc[npcId] = -1;
-                    pathNpc[npcId] = 0;
-                }
-
-                break;
-            case (px < path[pathNpc[npcId]][0]):
-                npc[npcId].move('right');
-                break;
-            case (px > path[pathNpc[npcId]][0]):
-                npc[npcId].move('left');
-                break;
-            case (py < path[pathNpc[npcId]][1]):
-                npc[npcId].move('bottom');
-                break;
-            case (py > path[pathNpc[npcId]][1]):
-                npc[npcId].move('top');
-                break;
-        }
-    }
-}
-
-function updateEntities(dt) {
-    drawPathLines(path1, 'blue');
-    drawPathLines(path2, 'red');
-    drawPathLines(path3, 'yellow');
-    updateEntitie(0, path1);
-    updateEntitie(1, path2);
-    updateEntitie(2, path3);
-}
 
 
 

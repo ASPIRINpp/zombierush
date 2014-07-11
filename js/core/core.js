@@ -12,9 +12,15 @@ var Core = {};
 
     Core = {
         version: '0.1',
-        developMode: true,
+        developMode: false,
         forceMode: true,
         aliasMode: true,
+        fps: {
+            current: 0,
+            filter: 50,
+            hits:0,
+            
+        },
         canvas: {
             width: 800,
             height: 600

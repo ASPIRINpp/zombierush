@@ -123,6 +123,17 @@
         },
         addChild: function(parent, childName, child) {
             parent[childName] = child;
+        },
+        calcFps: function() {
+            var lastTime = Core.fps.filter;
+            Core.fps.hits++;
+            var nowTime = Core.Time.now();
+            if (nowTime - lastTime > 1000) {
+                var dt = nowTime - lastTime;
+                Core.fps.current = '' + Math.round(Core.fps.hits * 1000 / dt);
+                Core.fps.hits = 0;
+                Core.fps.filter = nowTime;
+            }
         }
     };
 
@@ -148,6 +159,8 @@
         }
     };
 
+    if (Core.aliasMode === true)
+        window.CT = Core.Time;
 
     Core.Console.log('Init bootstrap module!');
 
@@ -159,5 +172,7 @@
     Core.includeModule('npc');
     // Load Render module
     Core.includeModule('render');
+    // Load roads
+    Core.includeModule('roads');
 
 })();

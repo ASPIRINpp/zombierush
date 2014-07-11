@@ -16,10 +16,12 @@
             _methods.beforeMove(npc, to, dt);
             switch (to) {
                 case 'top':
+                case 'up':
                     npc.sprite.level = npc.sprite.levels.top;
                     npc.pos[1] -= npc.speed * dt;
                     break;
                 case 'bottom':
+                case 'down':
                     npc.sprite.level = npc.sprite.levels.bottom;
                     npc.pos[1] += npc.speed * dt;
                     break;

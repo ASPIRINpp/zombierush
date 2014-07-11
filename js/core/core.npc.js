@@ -2,7 +2,7 @@
 
     // Storage
     var _storage = new Array(), _keys = new Array();
-
+    
     /**
      * Put NPC in storage
      * @param {string} key Name of NPC

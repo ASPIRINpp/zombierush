@@ -18,6 +18,7 @@
 
     Render = {
         go: function(ctx) {
+            Core.Helper.calcFps();
             // Get canvas
             ctx = Core.Helper.isset(ctx) ? ctx : Core.ctx;
             // Get sprites
