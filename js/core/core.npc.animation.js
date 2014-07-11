@@ -13,18 +13,18 @@
             }
         },
         beforeDie: function(npc, dt) {
+            
         },
         afterDie: function(npc, dt) {
-            if (npc.sprite.fr !== 6)
-            {
-                this.standartDie(npc, dt);
-            }
+            if (npc.sprite.done)
+                console.log('die');
         },
         standartDie: function(npc, dt) {
             _methods.beforeDie(npc, dt);
-            
             npc.sprite.level = npc.sprite.levels.die;
-            //            npc.sprite.once = true;
+            npc.sprite.once = true;
+            npc.sprite.fr = 0;
+            npc.sprite._index = 0;
             _methods.afterDie(npc, dt);
         },
         standartMove: function(npc, to, dt) {
@@ -56,7 +56,6 @@
                 console.log(npc);
             }
             _methods.afterMove(npc, to, dt);
-            Core.Sprite.update(npc.sprite, dt);
         },
         afterMove: function(npc, to, dt) {
             if (Core.Helper.isset(npc.events) && Core.Helper.isset(npc.events.afterMove)) {

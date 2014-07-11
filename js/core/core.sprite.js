@@ -50,11 +50,10 @@
         update: function(sprite, dt) {
             if (!CH.isset(sprite) || !CH.isset(sprite._index))
             {
-                console.log('sprite>>>');
-                console.log(sprite);
+                Core.Console.log('sprite>>>');
+                Core.Console.log(sprite);
             }
             sprite._index += sprite.speed * dt;
-//            sprite.set('_index', sprite._index);
         },
         add: function(url, pos, posOnMap, levels, size, speed, frs, dir, once) {
             Core.Console.log('Sprite: new init by: ' + url);
@@ -77,28 +76,28 @@
 
             return index;
         },
+        destroy: function(id) {
+            _storageSprites.splice(id, 1);
+        },
         render: function(ctx, sprite) {
-
+            
+            if (typeof sprite === 'undefined' || sprite === null)
+                return;
+            
             if (sprite.speed > 0) {
                 var max = sprite.frs.length;
                 var idx = Math.floor(sprite._index);
 
                 sprite.fr = sprite.frs[idx % max];
-//                console.log(idx % max);
-                if (sprite.done)
-                {
-                    if (sprite.once && idx >= max) {
-                        sprite.done = true;
-                        return;
-                    }
+                
+                if (sprite.once && idx >= max) {
+                    sprite.done = true;
+                    return;
                 }
             }
             else {
                 sprite.fr = 0;
             }
-
-//            sprite.set('done', sprite.done);
-//            sprite.set('fr', sprite.fr);
 
             var x = sprite.pos[0];
             var y = sprite.pos[1];

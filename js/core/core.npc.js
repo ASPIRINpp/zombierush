@@ -2,7 +2,7 @@
 
     // Storage
     var _storage = new Array(), _keys = new Array();
-    
+
     /**
      * Put NPC in storage
      * @param {string} key Name of NPC
@@ -34,6 +34,24 @@
 
     function getNpcIndex(key) {
         return _keys[_keys.indexOf(key) + 1];
+    }
+
+    function destroyNpc(key) {
+
+        // Delete from storage
+        _storage.splice(_keys[_keys.indexOf(key) + 1], 1);
+        // Get index
+        var index = _keys.indexOf(key) + 1;
+        // Delete from keys
+        _keys.splice(_keys.indexOf(key), 2);
+        // Normalyze keys & npc sprites id
+        for (var k = index; k < _keys.length; k += 2)
+        {
+            _keys[k]--;
+            _storage[_keys[k]].spriteId--;
+//            _storage[_keys[k]].sprite = Core.Sprite.get(_storage[_keys[k]].spriteId);
+        }
+
     }
 
     function getDefaultOptions() {
@@ -86,6 +104,7 @@
         // Create Sprite
         var spriteId = Core.Sprite.add(NPC.sprite.resourceUrl, NPC.sprite.pos, NPC.pos, NPC.sprite.levels, NPC.sprite.size, NPC.speed, NPC.sprite.frames, NPC.sprite.dir, NPC.sprite.once);
         NPC.sprite = Core.Sprite.get(spriteId);
+        NPC.spriteId = spriteId;
 
         // Put NPC in storage
         putNpc(uid, NPC);
@@ -99,6 +118,11 @@
 
 
     Npc = {
+        go: function() {
+            for (var k in _storage)
+                if (Core.Helper.isset(_storage[k].events) && Core.Helper.isset(_storage[k].events.update))
+                    _storage[k].events.update();
+        },
         add: function(params, uid) {
             return createNpc(params, uid);
         },
@@ -107,6 +131,28 @@
         },
         getAll: function() {
             return _storage;
+        },
+        destroy: function(uid) {
+            // Get NPC
+            var NPC = getNpc(uid);
+
+            if (Core.Helper.isset(NPC) === false)
+                return;
+
+            // Send events
+            if (Core.Helper.isset(NPC.events) && Core.Helper.isset(NPC.events.destroy))
+                NPC.events.destroy();
+
+            // Get is sprite
+            var spriteId = NPC.spriteId;
+            NPC = null;
+
+            // Delete sprite in storage
+            Core.Sprite.destroy(spriteId);
+
+            // Delete NPC in storage
+            destroyNpc(uid);
+
         }
     };
 

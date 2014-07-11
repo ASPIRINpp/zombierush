@@ -16,20 +16,31 @@ function createZombie(title, pos) {
     zombie.animation.move = function(to) {
         Core.Npc.Animation.get('standartMove')(zombie, to, Core.Time.dt());
     };
-    
+
     // Add die animation
-    zombie.animation.die = function(to) {
+    zombie.animation.die = function() {
         Core.Roads.detach(uid);
         zombie.health = 0;
-        zombie.sprite.fr = 0;
         Core.Npc.Animation.get('standartDie')(zombie, Core.Time.dt());
+    };
+
+    // Update events
+    zombie.events.update = function() {
+        if (zombie.health === 0 && zombie.sprite.done === true)
+        {
+            Core.Npc.destroy(uid);
+        }
+    };
+
+    zombie.events.destroy = function() {
+        console.log('Desctuctor zombie: '+zombie.title);
     };
 
     var says = [
         'Argghhh!',
         'Braaainss...',
         'Whe-e brainssss...',
-        'To be, or not to be...',
+        'To be, or not to be...'
     ];
 
     // Add events
@@ -39,12 +50,10 @@ function createZombie(title, pos) {
 
         // Funy argghhh
         if (CH.randInt(0, 5000) === CH.randInt(0, 5000)) {
-            var text = says[CH.randInt(0, says.length-1)];
+            var text = says[CH.randInt(0, says.length - 1)];
             Core.Render.addObject((1000 * 3), function() {
                 Core.Render.renderBallon(npc.title + ': ' + text, npc.pos, Core.ctx);
             });
-
-            console.info('%s: %s', npc.title, text);
         }
     };
 

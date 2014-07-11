@@ -50,6 +50,7 @@
                 Core.ctx.save();
                 Core.ctx.translate(sprites[sortingSprites[k]].posOnMap[0], sprites[sortingSprites[k]].posOnMap[1]);
                 Core.Sprite.render(ctx, sprites[sortingSprites[k]]);
+                Core.Sprite.update(sprites[sortingSprites[k]], Core.Time.dt());
                 Core.ctx.restore();
             }
 

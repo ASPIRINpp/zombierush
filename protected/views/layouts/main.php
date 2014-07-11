@@ -35,8 +35,7 @@
             <div class="clear"></div>
 
             <div id="footer">
-                Copyright &copy; <?php echo date('Y'); ?> by ASPIRIN++.<br/>
-                All Rights Reserved.<br/>
+                Coded by ASPIRIN++.<br/>
                 <?php echo Yii::powered(); ?>
             </div><!-- footer -->
 

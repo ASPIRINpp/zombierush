@@ -87,17 +87,26 @@ function init() {
 
     var fpsOut = document.getElementById('fps');
     var npcCount = document.getElementById('npcCount');
-    setInterval(function() 
+    setInterval(function()
     {
         fpsOut.innerHTML = Core.fps.current;
         npcCount.innerHTML = Core.Npc.getAll().length;
-        
+
     }, 1000);
 
 
 }
 //
 
+
+function addMoreZombies(count) {
+    count = CH.isset(count) ? count : 50;
+
+    var pathes = ['path1', 'path2', 'path3'];
+
+    for (var i = 0; i < count; i++)
+        Core.Roads.applyRoadToNpc(createZombie('Alice' + CH.unquid('xyxx'), [CH.randInt(0, Core.canvas.width), CH.randInt(0, Core.canvas.height)]), pathes[CH.randInt(0, pathes.length-1)]);
+}
 
 function main() {
     var now = Core.Time.now();
@@ -121,7 +130,7 @@ function update(dt) {
 
 
 
-    
+
     handleInput(dt);
 
     // Draw road paths
@@ -129,6 +138,7 @@ function update(dt) {
     Core.Roads.drawPathRoad('path2', 'red');
     Core.Roads.drawPathRoad('path3', 'blue');
 
+    Core.Npc.go();
     Core.Render.go();
     Core.Roads.go();
 

@@ -23,12 +23,6 @@
         return _roads[index];
     }
 
-//    function updateNpcRoad(npcId, path)
-//    {
-//        _npcRoads[npcId] = path;
-//    }
-
-
     /**
      * Draw lines by path
      * @param {type} path
@@ -78,14 +72,11 @@
                         Core.Console.groupEnd();
 
                         path.pos++;
-//                        updateNpcRoad(npcUid, path);
-
                     }
                     else
                     {
                         //path.pos = -1;
                         path.pos = 0;
-//                        updateNpcRoad(npcUid, path);
                     }
 
                     break;
@@ -118,7 +109,6 @@
         },
         go: function() {
             for (var npcId in _npcRoads)
-                if (_npcRoads[npcId] !== null)
                     moveNPC(npcId, _npcRoads[npcId]);
         },
         drawPathRoad: function(roadId, color) {
@@ -126,7 +116,7 @@
         },
         detach: function(npcId) {
             if (Core.Helper.isset(_npcRoads[npcId]))
-                _npcRoads[npcId] = null;
+                delete _npcRoads[npcId];
         }
     };
 
