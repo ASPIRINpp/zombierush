@@ -52,20 +52,41 @@ Core.onReady(function() {
 
         document.getElementById('content').onclick = function(e) {
             console.log('[' + e.layerX + ', ' + e.layerY + '],');
+            checkCollision([e.layerX, e.layerY]);
+        };
+
+        document.getElementById('addZombie').onclick = function(e) {
+            addMoreZombies(1);
         };
 
 
     });
 
-
-
-
 });
 
+/**
+ * 
+ * @param {type} pos
+ * @returns {undefined}
+ */
+function checkCollision(pos)
+{
+    var npcs = Core.Npc.getAll();
+    for (var k in npcs) {
+        var areaX = [npcs[k].pos[0], npcs[k].pos[0] + npcs[k].sprite.size[0]],
+                areaY = [npcs[k].pos[1], npcs[k].pos[1] + npcs[k].sprite.size[1]];
+        if ((pos[0] >= areaX[0] && pos[0] <= areaX[1]) && (pos[1] >= areaY[0] && pos[1] <= areaY[1]))
+        {
 
-//var sprite, lastTime, gameTime;
-//var npc = [];
-var playerName;
+            console.log('Click on %s', npcs[k].title);
+            if (!CH.isset(npcs[k].dies))
+                npcs[k].animation.die();
+        }
+    }
+}
+
+
+//var playerName;
 function init() {
     var now = Core.Time.now();
     Core.Time.setLastTime(now);
@@ -73,20 +94,21 @@ function init() {
     Game['terrainPattern'] = Core.ctx.createPattern(Game.res.get(SPRITES.terrain.grass3), 'repeat');
 
     // Add paths roads
-    Core.Roads.addPath('path1', [[30, 0], [30, 316], [310, 314], [310, 185], [435, 185], [435, 322], [691, 319]]);
-    Core.Roads.addPath('path2', [[83, 50], [215, 50], [215, 350], [365, 350], [365, 131], [676, 130]]);
+    Core.Roads.addPath('path1', [[30, 80], [30, 316], [310, 314], [310, 185], [435, 185], [435, 322], [691, 319]]);
+    Core.Roads.addPath('path2', [[83, 80], [215, 50], [215, 350], [365, 350], [365, 131], [676, 130]]);
     Core.Roads.addPath('path3', [[668, 82], [657, 415], [430, 409], [453, 62], [329, 51], [321, 379], [128, 380]]);
 
-    playerName = createZombie('Bob');
-    console.info('Create player %s', playerName);
+//    playerName = createZombie('Bob');
+//    console.info('Create player %s', playerName);
 
-    Core.Roads.applyRoadToNpc(playerName, 'path2');
-    Core.Roads.applyRoadToNpc(createZombie('Alice'), 'path1');
+//    Core.Roads.applyRoadToNpc(playerName, 'path2');
+//    Core.Roads.applyRoadToNpc(createZombie('Alice'), 'path1');
 
     main();
 
     var fpsOut = document.getElementById('fps');
     var npcCount = document.getElementById('npcCount');
+
     setInterval(function()
     {
         fpsOut.innerHTML = Core.fps.current;
@@ -96,8 +118,6 @@ function init() {
 
 
 }
-//
-
 
 function addMoreZombies(count) {
     count = CH.isset(count) ? count : 50;
@@ -105,7 +125,11 @@ function addMoreZombies(count) {
     var pathes = ['path1', 'path2', 'path3'];
 
     for (var i = 0; i < count; i++)
-        Core.Roads.applyRoadToNpc(createZombie('Alice' + CH.unquid('xyxx'), [CH.randInt(0, Core.canvas.width), CH.randInt(0, Core.canvas.height)]), pathes[CH.randInt(0, pathes.length-1)]);
+    {
+        var uid = createZombie('Bob[' + CH.unquid('xyxx') + ']', [CH.randInt(0, Core.canvas.width), CH.randInt(0, Core.canvas.height)]);
+        console.info(uid);
+        Core.Roads.applyRoadToNpc(uid, pathes[CH.randInt(0, pathes.length - 1)]);
+    }
 }
 
 function main() {
@@ -125,49 +149,18 @@ function render() {
     Core.ctx.fillRect(0, 0, Core.canvas.width, Core.canvas.height);
 }
 
-
 function update(dt) {
-
-
-
-
-    handleInput(dt);
+//    handleInput(dt);
 
     // Draw road paths
-    Core.Roads.drawPathRoad('path1', 'black');
-    Core.Roads.drawPathRoad('path2', 'red');
-    Core.Roads.drawPathRoad('path3', 'blue');
+//    Core.Roads.drawPathRoad('path1', 'black');
+//    Core.Roads.drawPathRoad('path2', 'red');
+//    Core.Roads.drawPathRoad('path3', 'blue');
 
     Core.Npc.go();
     Core.Render.go();
     Core.Roads.go();
-
-
 }
-
-
-function sorting() {
-    var sortable = [];
-
-    for (var k in npc)
-        sortable.push([k, npc[k].getPos(1)])
-
-    sortable.sort(function(a, b) {
-        return a[1] - b[1]
-    });
-
-    var newNpc = [];
-    for (var k in sortable) {
-        newNpc.push(npc[sortable[k][0]])
-    }
-
-    npc = newNpc;
-}
-
-
-
-
-
 
 function handleInput(dt) {
 

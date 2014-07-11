@@ -13,11 +13,14 @@
             }
         },
         beforeDie: function(npc, dt) {
-            
+            if (Core.Helper.isset(npc.events) && Core.Helper.isset(npc.events.beforeDie)) {
+                npc.events.beforeDie(npc, dt);
+            }
         },
         afterDie: function(npc, dt) {
-            if (npc.sprite.done)
-                console.log('die');
+            if (Core.Helper.isset(npc.events) && Core.Helper.isset(npc.events.afterDie)) {
+                npc.events.afterDie(npc, dt);
+            }
         },
         standartDie: function(npc, dt) {
             _methods.beforeDie(npc, dt);

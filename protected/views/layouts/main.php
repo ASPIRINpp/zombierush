@@ -27,6 +27,7 @@
                 <?php echo CHtml::encode(Yii::app()->name); ?>
                 | FPS: <span id="fps">50</span>
                 | NPC: <span id="npcCount">0</span>
+                | <button id="addZombie">Add zombie</button>
             </div><!-- header -->
 
 

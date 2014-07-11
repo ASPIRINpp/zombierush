@@ -21,19 +21,34 @@ function createZombie(title, pos) {
     zombie.animation.die = function() {
         Core.Roads.detach(uid);
         zombie.health = 0;
+        zombie.dies = true;
         Core.Npc.Animation.get('standartDie')(zombie, Core.Time.dt());
     };
 
     // Update events
     zombie.events.update = function() {
-        if (zombie.health === 0 && zombie.sprite.done === true)
+        if (zombie.health === 0)
         {
-            Core.Npc.destroy(uid);
+            if (CH.isset(zombie.dies) === false)
+                zombie.animation.die();
+            else
+            if (zombie.sprite.done === true)
+                Core.Npc.destroy(uid);
         }
+
     };
 
+    // Before die event
+    zombie.events.beforeDie = function(npc, dt) {
+        var text = lastSays[CH.randInt(0, lastSays.length - 1)];
+        Core.Render.addObject((1000 * 3), function() {
+            Core.Render.renderBallon(npc.title + ': ' + text, npc.pos, Core.ctx);
+        });
+    };
+
+    // Destroy event
     zombie.events.destroy = function() {
-        console.log('Desctuctor zombie: '+zombie.title);
+        console.log('Desctuctor zombie: ' + zombie.title);
     };
 
     var says = [
@@ -42,6 +57,18 @@ function createZombie(title, pos) {
         'Whe-e brainssss...',
         'To be, or not to be...'
     ];
+
+    var lastSays = [
+        'За чтооо!?',
+        'Суки...',
+        'Мир жесток!',
+        'Агррр',
+        'И чего ты добился?',
+        'Ай!',
+        'Больно!!!',
+        'Моя задница в огне',
+    ];
+
 
     // Add events
     zombie.events.afterMove = function(npc, to, dt) {
