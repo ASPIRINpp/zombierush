@@ -2,10 +2,10 @@
 
     var _methods = {
         standartOutMapAction: function(npc) {
-            if (npc.pos[0] > Core.canvas.width || npc.pos[0] < -150)
-                npc.pos[0] = 0;
-            if (npc.pos[1] > Core.canvas.height || npc.pos[1] < -150)
-                npc.pos[1] = 0;
+//            if (npc.pos[0] > Core.canvas.width || npc.pos[0] < -150)
+//                npc.pos[0] = 0;
+//            if (npc.pos[1] > Core.canvas.height || npc.pos[1] < -150)
+//                npc.pos[1] = 0;
         },
         beforeMove: function(npc, to, dt) {
             if (Core.Helper.isset(npc.events) && Core.Helper.isset(npc.events.beforeMove)) {

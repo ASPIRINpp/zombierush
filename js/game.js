@@ -6,7 +6,9 @@ var SPRITES = {
         dirt: '/sprites/terrain/dirt.png',
         grass2: '/sprites/terrain/grass2.png',
         grass3: '/sprites/terrain/grass3.png',
+        grass4: '/sprites/terrain/grass4.png',
     },
+    road: '/sprites/roads/map1.png',
     npc: {
         zombie: '/sprites/npc/zombie.png',
         zombieRed: '/sprites/npc/zombierRed.png',
@@ -20,6 +22,7 @@ var Game = {
     money: 500,
 };
 
+var pathBuilder = new Array();
 
 Core.onReady(function() {
 
@@ -40,7 +43,8 @@ Core.onReady(function() {
     Game.res.load([
         SPRITES.npc.zombie,
         SPRITES.npc.zombieRed,
-        SPRITES.terrain.grass3,
+        SPRITES.terrain.grass4,
+        SPRITES.road
     ]);
 
     Game.res.onReady(function() {
@@ -49,6 +53,8 @@ Core.onReady(function() {
         init();
 
         document.getElementById('content').onclick = function(e) {
+            console.log('[' + e.layerX + ',' + e.layerY + ']');
+            pathBuilder.push([e.layerX, e.layerY]);
             checkCollision([e.layerX, e.layerY]);
         };
 
@@ -89,7 +95,8 @@ function init() {
     Core.Time.setLastTime(now);
 
     // Set terrain pattern 
-    Game['terrainPattern'] = Core.ctx.createPattern(Game.res.get(SPRITES.terrain.grass3), 'repeat');
+    Core.Terrain.createPattern(SPRITES.terrain.grass4);
+    Core.Terrain.addLayer(SPRITES.road, [0, 0]);
 
     // Add paths roads
     createRoads();
@@ -104,7 +111,6 @@ function main() {
     var now = Core.Time.now();
     var dt = Core.Time.dt();
 
-    render();
     update(dt);
 
     Core.Time.sLT(now);
@@ -112,9 +118,21 @@ function main() {
 }
 
 function createRoads() {
-    Core.Roads.addPath('path1', [[30, 80], [30, 316], [310, 314], [310, 185], [435, 185], [435, 322], [691, 319]]);
-    Core.Roads.addPath('path2', [[83, 80], [215, 50], [215, 350], [365, 350], [365, 131], [676, 130]]);
-    Core.Roads.addPath('path3', [[668, 82], [657, 415], [430, 409], [453, 62], [329, 51], [321, 379], [128, 380]]);
+//    Core.Roads.addPath('path1', [[30, 80], [30, 316], [310, 314], [310, 185], [435, 185], [435, 322], [691, 319]]);
+//    Core.Roads.addPath('path2', [[83, 80], [215, 50], [215, 350], [365, 350], [365, 131], [676, 130]]);
+//    Core.Roads.addPath('path3', [[668, 82], [657, 415], [430, 409], [453, 62], [329, 51], [321, 379], [128, 380]]);
+    Core.Roads.addPath('road', [
+        
+        [276, 0],
+        [278, 366],
+        [495, 366],
+        [497, 243],
+        [83, 241],
+        [84, 556],
+        [625, 557],
+        [629, 112],
+        [800, 111]
+    ]);
 }
 
 function renderMenu() {
@@ -132,7 +150,7 @@ function renderMenu() {
 function addMoreZombies(count) {
     count = CH.isset(count) ? count : 50;
 
-    var pathes = ['path1', 'path2', 'path3'];
+    var pathes = ['road'];
 
     for (var i = 0; i < count; i++) {
         var uid = createZombie({pos: [CH.randInt(0, Core.canvas.width), CH.randInt(0, Core.canvas.height)]});
@@ -140,16 +158,30 @@ function addMoreZombies(count) {
     }
 }
 
+function newWave(count) {
+    var tmpFunction = function() {
+        console.log(count);
+        count--;
 
-function render() {
-    Core.ctx.fillStyle = Game.terrainPattern;
-    Core.ctx.fillRect(0, 0, Core.canvas.width, Core.canvas.height);
+        Core.Roads.applyRoadToNpc(createNpc('Zombie'), 'road');
+
+        if (count > 0)
+            setTimeout(tmpFunction, 1500);
+    }
+    setTimeout(tmpFunction, 1500)
+
+}
+
+function createNpc(name) {
+    var f = 'create' + name;
+    return eval(f + '({pos: [276, -64]})');
 }
 
 function update(dt) {
-//    handleInput(dt);
+    Core.Terrain.go();
 
     // Draw road paths
+//    Core.Roads.drawPathRoad('road', 'black');
 //    Core.Roads.drawPathRoad('path1', 'black');
 //    Core.Roads.drawPathRoad('path2', 'red');
 //    Core.Roads.drawPathRoad('path3', 'blue');

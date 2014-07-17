@@ -196,6 +196,8 @@
     Core.includeModule('npc');
     // Load Render module
     Core.includeModule('render');
+    // Load Render module
+    Core.includeModule('terrain');
     // Load roads
     Core.includeModule('roads');
 
