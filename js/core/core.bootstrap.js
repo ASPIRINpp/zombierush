@@ -46,24 +46,24 @@
 
     Core.Helper = {
         /**
-         * 
-         * @param {type} o
-         * @returns {Boolean}
+         * Checl typeof !== 'undefined'
+         * @param {mixed} o Object
+         * @returns {Boolean} Result
          */
         isset: function(o) {
             return (typeof o !== 'undefined');
         },
         /**
-         * 
+         * Get current timestamp
          * @returns {Number}
          */
         getTimestamp: function() {
             return (new Date()).getTime();
         },
         /**
-         * 
-         * @param {type} min
-         * @param {type} max
+         * Generate rand int
+         * @param {type} min Minimum number
+         * @param {type} max Maximum number
          * @returns {Number}
          */
         randInt: function(min, max)
@@ -83,7 +83,7 @@
             });
         },
         /**
-         * 
+         * Extend prototype
          * @param {type} c1
          * @param {type} c2
          * @returns {undefined}
@@ -96,34 +96,19 @@
             }
         },
         /**
-         * 
-         * @param {type} child
-         * @param {type} parent
+         * Add children object
+         * @param {object} parent Parent
+         * @param {string} childName Children name
+         * @param {object} child Children object
          * @returns {undefined}
          */
-        extendPrototype: function(child, parent) {
-            var F = function() {
-            };
-            F.prototype = parent.prototype;
-            child.prototype = new F();
-            child.prototype.constructor = child;
-            child.superclass = parent.prototype;
-        },
-        /**
-         * 
-         * @param {type} constructor
-         * @param {type} methods
-         * @returns {undefined}
-         */
-        addMethods: function(constructor, methods) {
-            var key;
-            for (key in methods) {
-                constructor.prototype[key] = methods[key];
-            }
-        },
         addChild: function(parent, childName, child) {
             parent[childName] = child;
         },
+        /**
+         * Calculate FPS (fill Core.fps object)
+         * @returns {undefined}
+         */
         calcFps: function() {
             var lastTime = Core.fps.filter;
             Core.fps.hits++;
@@ -134,26 +119,64 @@
                 Core.fps.hits = 0;
                 Core.fps.filter = nowTime;
             }
+        },
+        /**
+         * Merge objects
+         * @param {type} a
+         * @param {type} b
+         * @returns {module.Helper.merge.a}
+         */
+        merge: function(a, b) {
+            for (var k in b) 
+                a[k] = b[k];
         }
     };
 
     if (Core.aliasMode === true)
         window.CH = Core.Helper;
 
+    /**
+     * Time object
+     */
     Core.Time = {
+        /**
+         * lastTime update
+         */
         lastTime: 0,
+        /**
+         * Get Date.now()
+         * @returns {Number}
+         */
         now: function() {
             return Date.now();
         },
+        /**
+         * Caclulation date delta
+         * @returns {Number}
+         */
         getDt: function() {
             return (this.now() - this.lastTime) / 1000.0;
         },
+        /**
+         * Alias for getDt
+         * @returns {Number}
+         */
         dt: function() {
             return this.getDt();
         },
+        /**
+         * Set new last time
+         * @param {type} time
+         * @returns {undefined}
+         */
         setLastTime: function(time) {
             this.lastTime = time;
         },
+        /**
+         * Alias for setLastTime
+         * @param {type} t
+         * @returns {undefined}
+         */
         sLT: function(t) {
             this.setLastTime(t);
         }
@@ -161,6 +184,7 @@
 
     if (Core.aliasMode === true)
         window.CT = Core.Time;
+
 
     Core.Console.log('Init bootstrap module!');
 

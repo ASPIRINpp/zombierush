@@ -16,10 +16,8 @@ var SPRITES = {
 
 var Game = {
     res: null,
-    lastTime: null,
-    updateLastTime: function() {
-        this.lastTime = Date.now();
-    }
+    sroce: 0,
+    money: 500,
 };
 
 
@@ -51,14 +49,12 @@ Core.onReady(function() {
         init();
 
         document.getElementById('content').onclick = function(e) {
-            console.log('[' + e.layerX + ', ' + e.layerY + '],');
             checkCollision([e.layerX, e.layerY]);
         };
 
         document.getElementById('addZombie').onclick = function(e) {
             addMoreZombies(1);
         };
-
 
     });
 
@@ -77,10 +73,9 @@ function checkCollision(pos)
                 areaY = [npcs[k].pos[1], npcs[k].pos[1] + npcs[k].sprite.size[1]];
         if ((pos[0] >= areaX[0] && pos[0] <= areaX[1]) && (pos[1] >= areaY[0] && pos[1] <= areaY[1]))
         {
-
-            console.log('Click on %s', npcs[k].title);
             if (!CH.isset(npcs[k].dies))
                 npcs[k].animation.die();
+            return;
         }
     }
 }
@@ -88,24 +83,41 @@ function checkCollision(pos)
 
 //var playerName;
 function init() {
+
+    // Set started times
     var now = Core.Time.now();
     Core.Time.setLastTime(now);
-    Core.Time.dt();
+
+    // Set terrain pattern 
     Game['terrainPattern'] = Core.ctx.createPattern(Game.res.get(SPRITES.terrain.grass3), 'repeat');
 
     // Add paths roads
+    createRoads();
+    // Start game
+    main();
+    // Render menu
+    renderMenu();
+
+}
+
+function main() {
+    var now = Core.Time.now();
+    var dt = Core.Time.dt();
+
+    render();
+    update(dt);
+
+    Core.Time.sLT(now);
+    requestAnimFrame(main);
+}
+
+function createRoads() {
     Core.Roads.addPath('path1', [[30, 80], [30, 316], [310, 314], [310, 185], [435, 185], [435, 322], [691, 319]]);
     Core.Roads.addPath('path2', [[83, 80], [215, 50], [215, 350], [365, 350], [365, 131], [676, 130]]);
     Core.Roads.addPath('path3', [[668, 82], [657, 415], [430, 409], [453, 62], [329, 51], [321, 379], [128, 380]]);
+}
 
-//    playerName = createZombie('Bob');
-//    console.info('Create player %s', playerName);
-
-//    Core.Roads.applyRoadToNpc(playerName, 'path2');
-//    Core.Roads.applyRoadToNpc(createZombie('Alice'), 'path1');
-
-    main();
-
+function renderMenu() {
     var fpsOut = document.getElementById('fps');
     var npcCount = document.getElementById('npcCount');
 
@@ -115,8 +127,6 @@ function init() {
         npcCount.innerHTML = Core.Npc.getAll().length;
 
     }, 1000);
-
-
 }
 
 function addMoreZombies(count) {
@@ -124,25 +134,12 @@ function addMoreZombies(count) {
 
     var pathes = ['path1', 'path2', 'path3'];
 
-    for (var i = 0; i < count; i++)
-    {
-        var uid = createZombie('Bob[' + CH.unquid('xyxx') + ']', [CH.randInt(0, Core.canvas.width), CH.randInt(0, Core.canvas.height)]);
-        console.info(uid);
+    for (var i = 0; i < count; i++) {
+        var uid = createZombie({pos: [CH.randInt(0, Core.canvas.width), CH.randInt(0, Core.canvas.height)]});
         Core.Roads.applyRoadToNpc(uid, pathes[CH.randInt(0, pathes.length - 1)]);
     }
 }
 
-function main() {
-    var now = Core.Time.now();
-    var dt = Core.Time.dt();
-
-
-    render();
-    update(dt);
-
-    Core.Time.sLT(now);
-    requestAnimFrame(main);
-}
 
 function render() {
     Core.ctx.fillStyle = Game.terrainPattern;
