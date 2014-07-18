@@ -52,14 +52,20 @@ Core.onReady(function() {
         CC.grpE();
         init();
 
+
+        // Menu Events
         document.getElementById('content').onclick = function(e) {
             console.log('[' + e.layerX + ',' + e.layerY + ']');
             pathBuilder.push([e.layerX, e.layerY]);
             checkCollision([e.layerX, e.layerY]);
         };
 
-        document.getElementById('addZombie').onclick = function(e) {
-            addMoreZombies(1);
+//        document.getElementById('addZombie').onclick = function(e) {
+//            addMoreZombies(1);
+//        };
+        
+        document.getElementById('waveZombie').onclick = function(e) {
+            newWave(10);
         };
 
     });

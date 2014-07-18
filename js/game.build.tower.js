@@ -1,8 +1,8 @@
 function buildTower(pos) {
     var uid = Core.Npc.add({
-        title: title,
+        title: 'tower',
         health: 100,
-        speed: 14,
+        speed: 0,
         sprite: {
             resourceUrl: SPRITES.npc.zombie,
             frames: [0, 1, 2, 3, 4, 5, 6]
