@@ -1,5 +1,3 @@
-
-
 var SPRITES = {
     terrain: {
         grass: '/sprites/terrain/grass.png',
@@ -11,6 +9,7 @@ var SPRITES = {
     road: '/sprites/roads/map1.png',
     npc: {
         zombie: '/sprites/npc/zombie.png',
+        tower: '/sprites/npc/tower.png',
         zombieRed: '/sprites/npc/zombierRed.png',
         marine: '/sprites/npc/marineEnd.png',
     }
@@ -31,6 +30,7 @@ Core.onReady(function() {
     CC.grpC('Game loading ');
     console.log('>>>>>>>>Game loading...');
     Core.includeJs('/js/game.npc.zombie.js');
+    Core.includeJs('/js/game.build.tower.js');
     Core.includeJs('/js/game.npc.redZombie.js');
     Core.includeJs('/js/input.js');
 
@@ -41,6 +41,7 @@ Core.onReady(function() {
 
     // Loading resouce
     Game.res.load([
+        SPRITES.npc.tower,
         SPRITES.npc.zombie,
         SPRITES.npc.zombieRed,
         SPRITES.terrain.grass4,
@@ -79,19 +80,20 @@ Core.onReady(function() {
  */
 function checkCollision(pos)
 {
-    var npcs = Core.Npc.getAll();
-    for (var k in npcs) {
-        var areaX = [npcs[k].pos[0], npcs[k].pos[0] + npcs[k].sprite.size[0]],
-                areaY = [npcs[k].pos[1], npcs[k].pos[1] + npcs[k].sprite.size[1]];
-        if ((pos[0] >= areaX[0] && pos[0] <= areaX[1]) && (pos[1] >= areaY[0] && pos[1] <= areaY[1]))
-        {
-            if (!CH.isset(npcs[k].dies))
-                npcs[k].animation.die();
-            return;
-        }
-    }
+//    var npcs = Core.Npc.getAll();
+//    for (var k in npcs) {
+//        var areaX = [npcs[k].pos[0], npcs[k].pos[0] + npcs[k].sprite.size[0]],
+//                areaY = [npcs[k].pos[1], npcs[k].pos[1] + npcs[k].sprite.size[1]];
+//        if ((pos[0] >= areaX[0] && pos[0] <= areaX[1]) && (pos[1] >= areaY[0] && pos[1] <= areaY[1]))
+//        {
+//            if (!CH.isset(npcs[k].dies))
+//                npcs[k].animation.die();
+//            return;
+//        } else {
+            buildTower(pos);
+//        }
+//    }
 }
-
 
 //var playerName;
 function init() {
@@ -195,6 +197,14 @@ function update(dt) {
     Core.Npc.go();
     Core.Render.go();
     Core.Roads.go();
+    
+    var units = Core.Npc.getAll();
+    
+    for (var k in units) {
+        if(CH.isset(units[k].events.update))
+        units[k].events.update();
+    }
+    
 }
 
 function handleInput(dt) {
@@ -218,4 +228,3 @@ function handleInput(dt) {
     }
 
 }
-

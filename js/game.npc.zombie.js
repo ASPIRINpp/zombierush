@@ -54,9 +54,11 @@ function createZombie(options) {
 
     // Update events
     zombie.events.update = function() {
-        if (zombie.health === 0)
+        
+        if (zombie.health <= 0)
         {
-            if (CH.isset(zombie.dies) === false)
+            console.log('die: '+zombie.health);
+            if (CH.isset(zombie.dies) === false || zombie.dies === false) 
                 zombie.animation.die();
             else
             if (zombie.sprite.done === true)

@@ -132,6 +132,11 @@
         getAll: function() {
             return _storage;
         },
+        damage: function(uid, damage) {
+//            console.log(uid + ': damage ' + damage);
+            _storage[getNpcIndex(uid)].health = _storage[getNpcIndex(uid)].health - damage;
+//            console.log(_storage[getNpcIndex(uid)].health);
+        },
         destroy: function(uid) {
             // Get NPC
             var NPC = getNpc(uid);

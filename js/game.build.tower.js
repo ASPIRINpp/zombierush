@@ -1,88 +1,125 @@
 function buildTower(pos) {
+    pos[1] -= 16;
+    pos[0] -= 16;
+
     var uid = Core.Npc.add({
         title: 'tower',
         health: 100,
-        speed: 0,
+        speed: 1,
+        radius: 100,
+        strength: 50,
         sprite: {
-            resourceUrl: SPRITES.npc.zombie,
-            frames: [0, 1, 2, 3, 4, 5, 6]
+            size: [32, 32],
+            resourceUrl: SPRITES.npc.tower,
+            frames: [0, 1, 2, 3, 4, 5, 6, 7],
+            once: false
         },
-        pos: CH.isset(pos) ? pos : [25, 25]
+        pos: pos
     });
 
-    var zombie = Core.Npc.get(uid);
+    var tower = Core.Npc.get(uid);
+
+    window.lastTower = tower;
 
     // Add moving animation
-    zombie.animation.move = function(to) {
-        Core.Npc.Animation.get('standartMove')(zombie, to, Core.Time.dt());
-    };
-
-    // Add die animation
-    zombie.animation.die = function() {
-        Core.Roads.detach(uid);
-        zombie.health = 0;
-        zombie.dies = true;
-        Core.Npc.Animation.get('standartDie')(zombie, Core.Time.dt());
-    };
-
-    // Update events
-    zombie.events.update = function() {
-        if (zombie.health === 0)
-        {
-            if (CH.isset(zombie.dies) === false)
-                zombie.animation.die();
-            else
-            if (zombie.sprite.done === true)
-                Core.Npc.destroy(uid);
+    tower.animation.move = function(to) {
+        switch (to) {
+            case 'top':
+            case 'up':
+                tower.sprite.speed = 0;
+                tower.sprite.fr = 0;
+                break;
+            case 'bottom':
+            case 'down':
+                tower.sprite.speed = 0;
+                tower.sprite.fr = 4;
+                break;
+            case 'left':
+                tower.sprite.speed = 0;
+                tower.sprite.fr = 6;
+                break;
+            case 'right':
+                tower.sprite.speed = 0;
+                tower.sprite.fr = 2;
+                break;
+            case 'tright':
+                tower.sprite.speed = 0;
+                tower.sprite.fr = 1;
+                break;
+            case 'bright':
+                tower.sprite.speed = 0;
+                tower.sprite.fr = 3;
+                break;
+            case 'bleft':
+                tower.sprite.speed = 0;
+                tower.sprite.fr = 5;
+                break;
+            case 'tleft':
+                tower.sprite.speed = 0;
+                tower.sprite.fr = 7;
+                break;
+            case 'free':
+                tower.sprite.speed = 1;
+                break;
         }
-
     };
 
-    // Before die event
-    zombie.events.beforeDie = function(npc, dt) {
-        var text = lastSays[CH.randInt(0, lastSays.length - 1)];
-        Core.Render.addObject((1000 * 3), function() {
-            Core.Render.renderBallon(npc.title + ': ' + text, npc.pos, Core.ctx);
-        });
-    };
+    // Update
+    tower.events.update = function() {
+        tower.render.radius();
 
-    // Destroy event
-    zombie.events.destroy = function() {
-        console.log('Desctuctor zombie: ' + zombie.title);
-    };
-
-    var says = [
-        'Argghhh!',
-        'Braaainss...',
-        'Whe-e brainssss...',
-        'To be, or not to be...'
-    ];
-
-    var lastSays = [
-        'За чтооо!?',
-        'Суки...',
-        'Мир жесток!',
-        'Агррр',
-        'И чего ты добился?',
-        'Ай!',
-        'Больно!!!',
-        'Моя задница в огне',
-    ];
-
-
-    // Add events
-    zombie.events.afterMove = function(npc, to, dt) {
-        // Out of map
-        Core.Npc.Animation.get('standartOutMapAction')(npc);
+        var zombies = Core.Npc.getAll();
+        for (var k in zombies)
+        {
+            if (zombies[k].title === 'zombie')
+            {
+                var in_radius = ((zombies[k].pos[0] - tower.pos[0]) ^ 2 + (zombies[k].pos[1] - tower.pos[1]) ^ 2) <= (tower.radius ^ 2);
+                if (in_radius)
+                {
+                    zombies[k].health -= tower.strength;
+                }
+            }
+        }
 
         // Funy argghhh
         if (CH.randInt(0, 5000) === CH.randInt(0, 5000)) {
             var text = says[CH.randInt(0, says.length - 1)];
             Core.Render.addObject((1000 * 3), function() {
-                Core.Render.renderBallon(npc.title + ': ' + text, npc.pos, Core.ctx);
+                Core.Render.renderBallon(tower.title + ': ' + text, tower.pos, Core.ctx);
             });
         }
     };
+
+    tower.render = {};
+    tower.render.radius = function() {
+        // translate context
+        
+        // draw circle which will be stretched into an oval
+        Core.ctx.beginPath();
+        Core.ctx.arc(tower.pos[0] + 16, tower.pos[1] + 16, tower.radius, 0, 2 * Math.PI, false);
+        Core.ctx.lineWidth = 1;
+        Core.ctx.strokeStyle = '#8ED6FF';
+        Core.ctx.stroke();
+    }
+
+    var says = [
+        'Tratatata!',
+        'Die! Die! Die!',
+        'Узрите свою ничтожность и отступайте!',
+        'Жалость — признак слабости',
+        'В пламя битвы! К горнилу войны!',
+        'Все за Императора!',
+        'Вперед, в рукопашную!',
+        'Мы умрем стоя!',
+        'Наконец-то война!',
+        'Умри! Умри! Умри!',
+        'Пади перед моим гневом!',
+        'Я очищу нечистое!',
+        'Я очищу мир от скверны!',
+        'Вера — мой щит! Ярость — мой меч!',
+        'Страдания! Вот участь грешников!',
+        'Калечь! Убивай! Жги!',
+    ];
 
     return uid;
 }

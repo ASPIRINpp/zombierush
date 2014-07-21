@@ -96,7 +96,7 @@
                 }
             }
             else {
-                sprite.fr = 0;
+//                sprite.fr = 0;
             }
 
             var x = sprite.pos[0];
