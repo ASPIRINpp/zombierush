@@ -73,9 +73,18 @@ function buildTower(pos) {
         {
             if (zombies[k].title === 'zombie')
             {
-                var in_radius = ((zombies[k].pos[0] - tower.pos[0]) ^ 2 + (zombies[k].pos[1] - tower.pos[1]) ^ 2) <= (tower.radius ^ 2);
+                var Xz = zombies[k].pos[0] + zombies[k].sprite.size[0]/2;
+                var Yz = zombies[k].pos[1] + zombies[k].sprite.size[1]/2;
+
+                var Xt = tower.pos[0];
+                var Yt = tower.pos[1];
+                var Rt = tower.radius;
+
+                var L = Math.sqrt((Xt - Xz)*(Xt - Xz) + (Yt - Yz)*(Yt - Yz));
+
+                var in_radius = (L <= Rt);
                 if (in_radius)
-                {
+                {                   
                     zombies[k].health -= tower.strength;
                 }
             }
@@ -93,7 +102,7 @@ function buildTower(pos) {
     tower.render = {};
     tower.render.radius = function() {
         // translate context
-        
+
         // draw circle which will be stretched into an oval
         Core.ctx.beginPath();
         Core.ctx.arc(tower.pos[0] + 16, tower.pos[1] + 16, tower.radius, 0, 2 * Math.PI, false);

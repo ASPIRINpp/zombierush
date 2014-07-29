@@ -130,7 +130,6 @@ function createRoads() {
 //    Core.Roads.addPath('path2', [[83, 80], [215, 50], [215, 350], [365, 350], [365, 131], [676, 130]]);
 //    Core.Roads.addPath('path3', [[668, 82], [657, 415], [430, 409], [453, 62], [329, 51], [321, 379], [128, 380]]);
     Core.Roads.addPath('road', [
-        
         [276, 0],
         [278, 366],
         [495, 366],
@@ -189,7 +188,7 @@ function update(dt) {
     Core.Terrain.go();
 
     // Draw road paths
-//    Core.Roads.drawPathRoad('road', 'black');
+    Core.Roads.drawPathRoad('road', 'red');
 //    Core.Roads.drawPathRoad('path1', 'black');
 //    Core.Roads.drawPathRoad('path2', 'red');
 //    Core.Roads.drawPathRoad('path3', 'blue');

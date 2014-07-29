@@ -57,7 +57,6 @@ function createZombie(options) {
         
         if (zombie.health <= 0)
         {
-            console.log('die: '+zombie.health);
             if (CH.isset(zombie.dies) === false || zombie.dies === false) 
                 zombie.animation.die();
             else
