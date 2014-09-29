@@ -1,3 +1,30 @@
+
+function loader() {
+    var _self = {
+        _id: 'loading',
+        _check: function() {
+            return (document.getElementById(_self._id) !== null);
+        },
+        _show: function() {
+            document.getElementById(_self._id).style.display = 'block';
+//            $(_self._id).show();
+        },
+        _hide: function() {
+            document.getElementById(_self._id).style.display = 'none';
+//            $(_self._id).hide();
+        }
+    };
+
+    return {
+        show: function() {
+            _self._show();
+        },
+        hide: function() {
+            _self._hide();
+        }
+    };
+}
+
 var SPRITES = {
     terrain: {
         grass: '/sprites/terrain/grass.png',
@@ -64,11 +91,11 @@ Core.onReady(function() {
 //        document.getElementById('addZombie').onclick = function(e) {
 //            addMoreZombies(1);
 //        };
-        
+
         document.getElementById('waveZombie').onclick = function(e) {
             newWave(10);
         };
-
+        loader().hide();
     });
 
 });
@@ -90,7 +117,7 @@ function checkCollision(pos)
 //                npcs[k].animation.die();
 //            return;
 //        } else {
-            buildTower(pos);
+    buildTower(pos);
 //        }
 //    }
 }
@@ -196,15 +223,16 @@ function update(dt) {
     Core.Npc.go();
     Core.Render.go();
     Core.Roads.go();
-    
+
     var units = Core.Npc.getAll();
-    
+
     for (var k in units) {
-        if(CH.isset(units[k].events.update))
-        units[k].events.update();
+        if (CH.isset(units[k].events.update))
+            units[k].events.update();
     }
-    
+
 }
+
 
 function handleInput(dt) {
 

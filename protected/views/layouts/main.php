@@ -8,7 +8,7 @@
         <style>
             body {padding: 0; margin: 0;}
             .top {
-                min-width: 100%;
+                min-width: 790px;
                 position: absolute;
                 top: 0;
                 background: #000; /* Цвет фона */

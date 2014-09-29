@@ -7,7 +7,10 @@ function buildTower(pos) {
         health: 100,
         speed: 1,
         radius: 100,
-        strength: 50,
+        params:{
+            attack: 50,
+            speed: 5,
+        },
         sprite: {
             size: [32, 32],
             resourceUrl: SPRITES.npc.tower,
