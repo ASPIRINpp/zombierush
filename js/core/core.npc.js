@@ -119,8 +119,9 @@
 
     Npc = {
         go: function() {
-            for (var k in _storage)
-                if (Core.Helper.isset(_storage[k].events) && Core.Helper.isset(_storage[k].events.update))
+            var CoreHelper = Core.Helper;
+            for (var k = 0, count = _storage.length; k < count; k++)
+                if (CoreHelper.isset(_storage[k].events) && CoreHelper.isset(_storage[k].events.update))
                     _storage[k].events.update();
         },
         add: function(params, uid) {

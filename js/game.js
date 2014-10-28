@@ -142,13 +142,38 @@ function init() {
 
 }
 
+function update(dt) {
+    var CoreNpc = Core.Npc,
+    CoreRoads = Core.Roads;
+    Core.Terrain.go();
+
+    // Draw road paths
+    CoreRoads.drawPathRoad('road', 'red');
+//    Core.Roads.drawPathRoad('path1', 'black');
+//    Core.Roads.drawPathRoad('path2', 'red');
+//    Core.Roads.drawPathRoad('path3', 'blue');
+
+    CoreNpc.go();
+    Core.Render.go();
+    CoreRoads.go();
+
+    var units = CoreNpc.getAll();
+
+    for (var k = 0, count = units.length; k < count; k++) {
+        if (CH.isset(units[k].events.update))
+            units[k].events.update();
+    }
+
+}
+
 function main() {
-    var now = Core.Time.now();
-    var dt = Core.Time.dt();
+    var CoreTime = Core.Time,
+    now = CoreTime.now(),
+    dt = CoreTime.dt();
 
     update(dt);
 
-    Core.Time.sLT(now);
+    CoreTime.sLT(now);
     requestAnimFrame(main);
 }
 
@@ -211,27 +236,6 @@ function createNpc(name) {
     return eval(f + '({pos: [276, -64]})');
 }
 
-function update(dt) {
-    Core.Terrain.go();
-
-    // Draw road paths
-    Core.Roads.drawPathRoad('road', 'red');
-//    Core.Roads.drawPathRoad('path1', 'black');
-//    Core.Roads.drawPathRoad('path2', 'red');
-//    Core.Roads.drawPathRoad('path3', 'blue');
-
-    Core.Npc.go();
-    Core.Render.go();
-    Core.Roads.go();
-
-    var units = Core.Npc.getAll();
-
-    for (var k in units) {
-        if (CH.isset(units[k].events.update))
-            units[k].events.update();
-    }
-
-}
 
 
 function handleInput(dt) {
