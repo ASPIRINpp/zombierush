@@ -2,6 +2,11 @@
 
     var _storage = new Array();
 
+    /**
+    * Put additional actions to render
+    * time: expired time
+    * lambda: execute function
+    */
     function putStorage(time, lambda) {
         _storage.push({expired: time, lambda: lambda});
     }
@@ -45,13 +50,14 @@
             // Scope optimization
             var CoreSprite = Core.Sprite,
             CoreCTX = Core.ctx,
-            CoreTime = Core.Time;
+            CoreTime = Core.Time,
+            CoreHelper = Core.Helper;
 
             // Get canvas
-            ctx = Core.Helper.isset(ctx) ? ctx : Core.ctx;
+            ctx = CoreHelper.isset(ctx) ? ctx : Core.ctx;
             
             // Get sprites
-            var sprites = Core.Sprite.getAll();
+            var sprites = CoreSprite.getAll();
             
             // Sorting
             var sortingSprites = sorting(sprites);
@@ -66,15 +72,19 @@
                 CoreCTX.restore();
             }
 
-            // Render others elements
+            // Render others elements / run lambda functions
             for (var k = 0, count = _storage.length; k < count; k++)
             {
-                if (_storage[k].expired > Core.Helper.getTimestamp())
+                if (_storage[k].expired > CoreHelper.getTimestamp()) {
                     _storage[k].lambda();
-                else
+                } else {
                     _storage.splice(k, 1);
+                    k--;
+                    count--;
+                }
             }
         },
+
         /**
          * 
          * @param {type} livetime in ms
