@@ -6,16 +6,22 @@
         _storage.push({expired: time, lambda: lambda});
     }
 
+    /**
+    * Sorting sprites by Y positions
+    * 
+    */
     function sorting(sprites) {
         var sortable = [];
+
+        for (var i = 0, count = sprites.length; i < count; i++) {
+            sortable.push([i, sprites[i].posOnMap[1]]);
+        }
         
-        for (var k in sprites)
-            sortable.push([k, sprites[k].posOnMap[1]]);
         sortable.sort(function(a, b) {return a[1] - b[1]});
 
         var result = [];
-        for (var k in sortable) {
-            result.push(sortable[k][0]);
+        for (var i = 0, count = sortable.length; i < count; i++) {
+            result.push(sortable[i][0]);
         }
 
         return result;
@@ -35,6 +41,12 @@
     Render = {
         go: function(ctx) {
             Core.Helper.calcFps();
+
+            // Scope optimization
+            var CoreSprite = Core.Sprite,
+            CoreCTX = Core.ctx,
+            CoreTime = Core.Time;
+
             // Get canvas
             ctx = Core.Helper.isset(ctx) ? ctx : Core.ctx;
             
@@ -45,17 +57,17 @@
             var sortingSprites = sorting(sprites);
 
             // Render!
-            for (var k in sortingSprites)
+            for (var k = 0, count = sortingSprites.length; k < count; k++)
             {
-                Core.ctx.save();
-                Core.ctx.translate(sprites[sortingSprites[k]].posOnMap[0], sprites[sortingSprites[k]].posOnMap[1]);
-                Core.Sprite.render(ctx, sprites[sortingSprites[k]]);
-                Core.Sprite.update(sprites[sortingSprites[k]], Core.Time.dt());
-                Core.ctx.restore();
+                CoreCTX.save();
+                CoreCTX.translate(sprites[sortingSprites[k]].posOnMap[0], sprites[sortingSprites[k]].posOnMap[1]);
+                CoreSprite.render(ctx, sprites[sortingSprites[k]]);
+                CoreSprite.update(sprites[sortingSprites[k]], CoreTime.dt());
+                CoreCTX.restore();
             }
 
             // Render others elements
-            for (var k in _storage)
+            for (var k = 0, count = _storage.length; k < count; k++)
             {
                 if (_storage[k].expired > Core.Helper.getTimestamp())
                     _storage[k].lambda();
