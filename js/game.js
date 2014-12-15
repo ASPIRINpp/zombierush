@@ -95,32 +95,37 @@ Core.onReady(function() {
 //            addMoreZombies(1);
 //        };
 
- //       document.getElementById('waveZombie').onclick = function(e) {
+        //       document.getElementById('waveZombie').onclick = function(e) {
 //            newWave(10);
         //};
         loader().hide();
     });
-        document.getElementById('killAll').onclick = function(e) {
-            killAll();
-        };
+    document.getElementById('killAll').onclick = function(e) {
+        killAll();
+    };
+    
+    document.getElementById('startGame').onclick = function(e) {
+        startTimer();
+        this.style.display = 'none';
+    };
 });
 
 function startTimer() {
-    setInterval(function(){
+    setInterval(function() {
         addMoreZombies(10);
-
-    },5000);
+    }, 5000);
 }
 
 function killAll() {
-    if (Game.money >= 500){
+    if (Game.money >= 500) {
         Game.money -= 500;
         var npcs = Core.Npc.getAll();
         for (var k in npcs) {
-                npcs[k].animation.die();
+            npcs[k].animation.die();
         }
         console.log("kill all done!")
-    } else console.error("Need more money!");
+    } else
+        console.error("Need more money!");
 }
 
 /**
@@ -145,27 +150,28 @@ function checkCollision(pos)
 //    }
 }
 
-function createRandomPath(steps, size){
+function createRandomPath(steps, size) {
 
     var Helper = CH,
-    path = [], 
-    steps = Helper.randInt(steps[0], steps[1]),
-    uid = Helper.unquid();
+            path = [],
+            steps = Helper.randInt(steps[0], steps[1]),
+            uid = Helper.unquid();
 
     console.log(path)
     console.log(steps)
 
     for (var i = 0; i < steps; i++) {
         path.push([Helper.randInt(size[0][0], size[0][1]), Helper.randInt(size[1][0], size[1][1])]);
-    };
+    }
+    ;
 
-    Core.Roads.addPath(uid, path); 
+    Core.Roads.addPath(uid, path);
 
     return uid;
 }
 
 function killZombie(pos) {
-     var npcs = Core.Npc.getAll();
+    var npcs = Core.Npc.getAll();
     for (var k in npcs) {
         var areaX = [npcs[k].pos[0], npcs[k].pos[0] + npcs[k].sprite.size[0]],
                 areaY = [npcs[k].pos[1], npcs[k].pos[1] + npcs[k].sprite.size[1]];
@@ -201,11 +207,11 @@ function init() {
     renderMenu();
 
 }
-window.cc =[]
+window.cc = []
 function update(dt) {
     var CoreNpc = Core.Npc,
-    Helper = CH,
-    CoreRoads = Core.Roads;
+            Helper = CH,
+            CoreRoads = Core.Roads;
     Core.Terrain.go();
 
     // Draw road paths
@@ -218,9 +224,9 @@ function update(dt) {
     //        console.log(roads[i])
     //        window.cc.push(roads[i])
     //    }
-        
+
     //}
-    
+
 //    Core.Roads.drawPathRoad('path1', 'black');
 //    Core.Roads.drawPathRoad('path2', 'red');
 //    Core.Roads.drawPathRoad('path3', 'blue');
@@ -240,8 +246,8 @@ function update(dt) {
 
 function main() {
     var CoreTime = Core.Time,
-    now = CoreTime.now(),
-    dt = CoreTime.dt();
+            now = CoreTime.now(),
+            dt = CoreTime.dt();
 
     update(dt);
 
@@ -253,7 +259,7 @@ function createRoads() {
 //    Core.Roads.addPath('path1', [[30, 80], [30, 316], [310, 314], [310, 185], [435, 185], [435, 322], [691, 319]]);
 //    Core.Roads.addPath('path2', [[83, 80], [215, 50], [215, 350], [365, 350], [365, 131], [676, 130]]);
 //    Core.Roads.addPath('path3', [[668, 82], [657, 415], [430, 409], [453, 62], [329, 51], [321, 379], [128, 380]]);
-return false
+    return false
     Core.Roads.addPath('road', [
         [276, 0],
         [278, 366],
@@ -269,9 +275,9 @@ return false
 
 function renderMenu() {
     var fpsOut = document.getElementById('fps'),
-    npcCount = document.getElementById('npcCount'),
-    money = document.getElementById('moneyCount'),
-    kills = document.getElementById('killsCount');
+            npcCount = document.getElementById('npcCount'),
+            money = document.getElementById('moneyCount'),
+            kills = document.getElementById('killsCount');
 
 
 

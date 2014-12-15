@@ -21,6 +21,7 @@
     </head>
     <body>
         <script type="text/javascript" src="/js/game.js"></script>
+        <button style="min-width:100px; min-height: 60px; position: absolute; left: 350px; top: 240px;" id="startGame">Start game</button>
         <div class="container" id="page">
             <div id="header" class="top">
                 Zoombie Rush                | FPS: <span id="fps">50</span>
@@ -30,7 +31,10 @@
                 <!--| <button id="addZombie">Add zombie</button>-->
                 | <button id="killAll">kill all ($500)</button>
             </div><!-- header -->
-            <div id="content"></div><!-- content -->
+            <div id="content">
+                <div id="loading" style="position: absolute; width: 800px; height: 600px; background: #000;">
+                    <p style="color: #fff; text-align: center; margin-top: 30%;">Loading...</p>
+                </div></div><!-- content -->
             <div class="clear"></div>
             <div id="footer">Coded by ASPIRIN++.<br/></div><!-- footer -->
         </div><!-- page -->
