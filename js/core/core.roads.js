@@ -117,6 +117,9 @@
         detach: function(npcId) {
             if (Core.Helper.isset(_npcRoads[npcId]))
                 delete _npcRoads[npcId];
+        },
+        getAllIds: function() {
+            return _roadsKeys;
         }
     };
 

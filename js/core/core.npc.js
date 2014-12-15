@@ -121,7 +121,9 @@
         go: function() {
             var CoreHelper = Core.Helper;
             for (var k = 0, count = _storage.length; k < count; k++)
-                if (CoreHelper.isset(_storage[k].events) && CoreHelper.isset(_storage[k].events.update))
+                if (_storage[k].length > 0 // Hack for fix bug
+                        && CoreHelper.isset(_storage[k].events) 
+                        && CoreHelper.isset(_storage[k].events.update))
                     _storage[k].events.update();
         },
         add: function(params, uid) {
