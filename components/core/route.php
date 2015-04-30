@@ -2,14 +2,14 @@
 
 /**
  * Route component
- * 
- * @since 0.2
+ *
+ * @since 0.3
  * @author Bogomazov Bogdan (ASPIRIN++) <b.bogomazov@gamil.com>
  */
 return [
     'core:route:_ver' => '0.2',
     'core:route:load_controller' => function($name) {
-    global $app;
+        global $app;
         $path = APP_PATH . 'controllers' . DIRECTORY_SEPARATOR .  $name . '.php';
         if(file_exists($path)) {
             $app['controller'] = include $path;
@@ -19,21 +19,20 @@ return [
     },
     'core:route:go' => function () {
         global $app;
-        $config = $app['config']['components']['core:route'];
+        // @todo create request component and load in GET params?
         $uri = explode('?', $_SERVER['REQUEST_URI']);
-        $routes = explode('/', $uri[0]);
+        $routes = explode('/', trim($uri[0],'/'), 3);
 
-        // Get controller name
-        $controller = !empty($routes[1]) ? strtolower($routes[1]) : $config['default_controller'];
-        // Get action name
-        $action = !empty($routes[2]) ? strtolower($routes[2]) : $config['default_action'];
+        $i = count($routes);
+        $action = !empty($routes[--$i]) ? strtolower($routes[$i]) : $app['config']['components']['core:route']['default_action'];
+        $controller = !empty($routes[--$i]) ? strtolower($routes[$i]) : $app['config']['components']['core:route']['default_controller'];
 
         if (f('core:route:load_controller', $controller) && isset($app['controller']["action:$action"])) {
             // Do action
             $app['controller']["action:$action"]();
         } else {
-            // 404
-            die('404');
+            // @todo create error controller
+            header("HTTP/1.0 404 Not Found");
         }
     }
 ];
