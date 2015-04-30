@@ -26,6 +26,10 @@ function init($app_dir, $components_dir) {
     define('APP_PATH', realpath($app_dir) . DIRECTORY_SEPARATOR);
     define('COM_PATH', realpath($components_dir) . DIRECTORY_SEPARATOR);
 
+    // Define cookie salt
+    // WARNING: change this value
+    define('COOKIE_SALT', '\Gm!Ud№Qy_lrXwBa3Htd}"),Tw}>AX>3');
+
     /**
      * Build app structure
      */
