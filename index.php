@@ -8,5 +8,10 @@ require_once 'app.php';
 // Go
 init('app', 'components');
 
+// Start session
+if (SESSION_ENABLE) {
+    f('core:session:open');
+}
+
 // Routing
 f('core:route:go');

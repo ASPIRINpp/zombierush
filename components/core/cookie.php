@@ -3,13 +3,13 @@
 /**
  * Cookie component
  *
- * @since 0.1
+ * @since 0.2
  * @author Bogomazov Bogdan (ASPIRIN++) <b.bogomazov@gamil.com>
  */
 return [
-    'core:cookie:_ver' => '0.1',
+    'core:cookie:_ver' => '0.2',
     'core:cookie:set' => function($key, $val, $expiration = 0) {
-        $val = f('core:cookie:salt', $key, $val).$val;
+        $val = COOKIE_SALT_ENABLE ? f('core:cookie:salt', $key, $val).$val : $val;
         $expiration = $expiration !== 0 ? $expiration + time() : 0;
         return setcookie($key, $val, $expiration, '/');
     },
@@ -19,12 +19,15 @@ return [
         }
 
         $val = $_COOKIE[$key];
-        $salt = substr($val, 0, 40);
-        $val = substr($val, 40);
 
-        if ($salt !== f('core:cookie:salt', $key, $val)) {
-            f('core:cookie:del', $key);
-            return $default;
+        if (COOKIE_SALT_ENABLE) {
+            $salt = substr($val, 0, 40);
+            $val = substr($val, 40);
+
+            if ($salt !== f('core:cookie:salt', $key, $val)) {
+                f('core:cookie:del', $key);
+                return $default;
+            }
         }
 
         return $val;
@@ -38,4 +41,3 @@ return [
         return sha1(COOKIE_SALT.$agent.$key.$val);
     }
 ];
-                

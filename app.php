@@ -1,14 +1,14 @@
 <?php defined('DOC_ROOT') or die('Access denied!');
 
 /**
- * This is you awersome app!
+ * This is you awesome app!
  */
 $app = [];
 
 /**
  * Init you app
  * @global array $app Link to you app
- * @param string $app_dir Applicaton directory
+ * @param string $app_dir Application directory
  * @param string $components_dir Components directory
  */
 function init($app_dir, $components_dir) {
@@ -26,10 +26,6 @@ function init($app_dir, $components_dir) {
     define('APP_PATH', realpath($app_dir) . DIRECTORY_SEPARATOR);
     define('COM_PATH', realpath($components_dir) . DIRECTORY_SEPARATOR);
 
-    // Define cookie salt
-    // WARNING: change this value
-    define('COOKIE_SALT', '\Gm!Ud№Qy_lrXwBa3Htd}"),Tw}>AX>3');
-
     /**
      * Build app structure
      */
@@ -39,6 +35,17 @@ function init($app_dir, $components_dir) {
         'models' => [],
         'config' => include APP_PATH . 'config' . DIRECTORY_SEPARATOR . 'app.php',
     ];
+
+    // Define session enables, cookie salt
+    // @todo It's fast, but...
+    define('SESSION_ENABLE', isset($app['config']['components']['core:session']['enable']) ? $app['config']['components']['core:session']['enable'] : FALSE);
+    define('COOKIE_SALT_ENABLE', isset($app['config']['components']['core:cookie']['enable_salt']) ? $app['config']['components']['core:cookie']['enable_salt'] : FALSE);
+
+    // Define cookie salt
+    // WARNING: change this value in config file
+    if (COOKIE_SALT_ENABLE) {
+        define('COOKIE_SALT', $app['config']['components']['core:cookie']['salt']);
+    }
 
     /**
      * Check needed i18n
@@ -55,6 +62,11 @@ function init($app_dir, $components_dir) {
 }
 
 
+/**
+ * @param $name
+ * @param string $to
+ * @todo refactoring this function
+ */
 function _loader($name, $to = 'vendor') {
     global $app;
     switch($to) {
@@ -77,6 +89,12 @@ function _loader($name, $to = 'vendor') {
     $app[$to] = array_merge($app[$to], include $path . str_replace(':', DIRECTORY_SEPARATOR, $name) . '.php');
 }
 
+/**
+ * @param $f
+ * @param $from
+ * @return mixed
+ * @todo refactoring this function
+ */
 function _getter($f, $from) {
     global $app;
     if (!isset($app[$from][$f])) {
@@ -88,6 +106,13 @@ function _getter($f, $from) {
     return $app[$from][$f];
 }
 
+/**
+ * @param $f
+ * @param $from
+ * @param $args
+ * @return mixed
+ * @todo refactoring this function
+ */
 function _caller($f, $from, $args) {
     return call_user_func_array(_getter($f, $from), $args);
 }
@@ -128,6 +153,7 @@ function gf($f) {
  * @param string $f Group:Component:Function name
  * @param mixed $_ [optional]  Variable list of arguments to callable function
  * @example f('helpers:test:say_hi', 'Bill');
+ * @todo refactoring this function
  */
 function f($f) {
     $args = [];
@@ -141,6 +167,7 @@ function f($f) {
 /**
  * @param $f
  * @return mixed
+ * @todo refactoring this function
  */
 function m($f) {
     $args = [];
@@ -149,4 +176,17 @@ function m($f) {
         unset($args[0]);
     }
     return _caller($f, 'models', $args);
+}
+
+/**
+ * Finish request, only for FastCGI
+ */
+function finish() {
+    if (PHP_SAPI != 'fpm-fcgi') {
+        return FALSE;
+    }
+    if (SESSION_ENABLE) {
+        session_write_close();
+    }
+    fastcgi_finish_request();
 }
