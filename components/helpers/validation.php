@@ -5,41 +5,85 @@ defined('APP_PATH') or die('Access denied!');
 /**
  * Validation methods
  *
- * @since 0.2
+ * @since 0.3
  * @author Bogomazov Bogdan (ASPIRIN++) <b.bogomazov@gamil.com>
  */
 return [
-    'helpers:validation:_ver' => '0.2',
+    'helpers:validation:_ver' => '0.3',
     'helpers:validation:check' => function ($arr, $rules) {
         $res = [];
+
         foreach ($rules as $rule) {
-            if (!isset($arr[$rule[0]]) && $rule[1] !== 'not_empty') {
+            if ((!isset($arr[$rule[0]]) || empty($arr[$rule[0]])) && $rule[1] !== 'not_empty') {
                 continue;
             }
+            $rule_name = $rule[1];
             $val = isset($arr[$rule[0]]) ? $arr[$rule[0]] : NULL;
 
             $params = isset($rule[2]) && is_array($rule[2]) ? $rule[2] : [];
-            $val = call_user_func_array('f', array_merge(["helpers:validation:{$rule[1]}", $val], $params));
+            $val = call_user_func_array('f', array_merge(["helpers:validation:{$rule_name}", $val], $params));
             if(!$val) {
                 if(!isset($res[$rule[0]])) {
                     $res[$rule[0]] = [];
                 }
-                $res[$rule[0]][] = $rule[1];
+                $res[$rule[0]][] = ($rule_name == 'callback' && isset($params[1])) ? $params[1] : $rule_name;
             }
         }
         return ['success' => empty($res), 'errors' => $res];
     },
+    /**
+     * User validation rule
+     */
+    'helpers:validation:callback' => function($val, $callback) {
+        return $callback($val);
+    },
+    /**
+     * Values equals
+     */
+    'helpers:validation:equals' => function($val, $val2) {
+        return ($val === $val2);
+    },
+    /**
+     * Value is not empty
+     */
     'helpers:validation:not_empty' => function($val) {
         return !in_array($val, array(NULL, FALSE, '', array()), TRUE);
     },
+    /**
+     * Regular expression
+     */
     'helpers:validation:regex' => function($val, $ex) {
         return (bool) preg_match($ex, (string) $val);
     },
+    /**
+     * Value more than $len
+     */
     'helpers:validation:min_length' => function($val, $len) {
         return f('helpers:string:utf8_strlen', $val) >= $len;
     },
+    /**
+     * Value less than $len
+     */
     'helpers:validation:max_length' => function($val, $len) {
         return f('helpers:string:utf8_strlen', $val) <= $len;
+    },
+    /**
+     * Number value in range
+     */
+    'helpers:validation:range' => function($val, $min, $max) {
+        return ($val <= $max && $val >= $min);
+    },
+    /**
+     * Number value more than $n
+     */
+    'helpers:validation:min' => function($val, $n) {
+        return ($val >= $n);
+    },
+    /**
+     * Number value less than $n
+     */
+    'helpers:validation:max' => function($val, $n) {
+        return ($val <= $n);
     },
     /**
      * Email validation
