@@ -2,12 +2,12 @@
 
 /**
  * MySQL Connector component
- * 
- * @since 0.3
+ *
+ * @since 0.4
  * @author Bogomazov Bogdan (ASPIRIN++) <b.bogomazov@gamil.com>
  */
 return [
-    'db:mysql:_ver' => '0.2',
+    'db:mysql:_ver' => '0.4',
     'db:mysql:connections' => [],
     'db:mysql:connect' => function($h, $d, $u, $p) {
         //@todo Returns a MySQL link identifier on failure connection.
@@ -23,10 +23,9 @@ return [
         global $app;
         $config = $app['config']['components']['db:mysql'];
         $name = is_int($name) ? array_keys($config)[$name] : $name;
-        
         if (isset($config[$name])) {
-           $app['components']['db:mysql:connections'][$name] = f('db:mysql:connect', $config[$name]['h'], $config[$name]['d'], $config[$name]['u'] ,$config[$name]['p']);
-           return TRUE;
+            $app['components']['db:mysql:connections'][$name] = f('db:mysql:connect', $config[$name]['h'], $config[$name]['d'], $config[$name]['u'] ,$config[$name]['p']);
+            return TRUE;
         }
         return FALSE;
     },
@@ -45,13 +44,22 @@ return [
         if(!is_resource($link) || get_resource_type($link) !== 'mysql link') {
             $link = f('db:mysql:get_link', $link);
         }
-        
         $sql = (is_array($params) && !empty($params)) ? f('db:mysql:build_sql', $sql, $params) : $sql;
 
         if (($result = mysql_query($sql, $link)) === FALSE) {
             trigger_error(mysql_error($link).' #'.mysql_errno($link), E_USER_ERROR);
         }
-        
+        return $result;
+    },
+    'db:mysql:q_column' => function($sql, $params = [], $col, $link = 0) {
+        $r = f('db:mysql:query', $sql, $params, $link);
+        $result = array();
+        if (!is_null($r)) {
+            while ($line = mysql_fetch_array($r, MYSQL_ASSOC)) {
+                $result[] = $line[$col];
+            }
+            mysql_free_result($r);
+        }
         return $result;
     },
     'db:mysql:q_current' => function($sql, $params = [], $link = 0) {
@@ -132,7 +140,7 @@ return [
             case is_float($value):
                 return sprintf('%F', $value);
                 break;
-            default: 
+            default:
                 return f('db:mysql:escape', $value);
         }
     }
