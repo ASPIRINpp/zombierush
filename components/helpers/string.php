@@ -146,7 +146,7 @@ return [
         return preg_replace('#(?<!:)//+#', '/', $str);
     },
     'helpers:string:limit_chars' =>function ($str, $limit = 100, $end_char = NULL, $preserve_words = FALSE) {
-        $end_char = ($end_char === NULL) ? '…' : $end_char;
+        $end_char = ($end_char === NULL) ? '...' : $end_char;
         $limit = (int) $limit;
         if (trim($str) === '' OR f('helpers:string:utf8_strlen', $str) <= $limit) {
             return $str;
