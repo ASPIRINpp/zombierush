@@ -5,11 +5,11 @@ defined('APP_PATH') or die('Access denied!');
 /**
  * Validation methods
  *
- * @since 0.3
+ * @since 0.4
  * @author Bogomazov Bogdan (ASPIRIN++) <b.bogomazov@gamil.com>
  */
 return [
-    'helpers:validation:_ver' => '0.3',
+    'helpers:validation:_ver' => '0.4',
     'helpers:validation:check' => function ($arr, $rules) {
         $res = [];
 
@@ -163,8 +163,19 @@ return [
     'helpers:validation:numeric' => function($str) {
         list($decimal) = array_values(localeconv());
         return (bool) preg_match('/^-?+(?=.*[0-9])[0-9]*+'.preg_quote($decimal).'?+[0-9]*+$/D', (string) $str);
-    }
+    },
+    /**
+     * Create human errors messages
+     */
+    'helpers:validation:compile_errors' => function($err_array, $ul = FALSE) {
+        $ul ? ($html_err = '<ul>') : ($arr = []);
+        foreach ($err_array as $field => $errors) {
+            foreach ($errors as $error) {
+                $str = __('Filed :filed :error', [':filed' => $field, ':error' => __($error)]);
+                $ul ? ($html_err .= "<li>$str</li>") : ($arr[$field] = $str);
+            }
+        }
+        $ul ? ($html_err .= '</ul>') : NULL;
+        return $ul ? $html_err : $arr;
+    },
 ];
-
-
-        

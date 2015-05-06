@@ -21,5 +21,3 @@ return [
         return $values;
     }
 ];
-
-
