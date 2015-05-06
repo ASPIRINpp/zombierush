@@ -3,11 +3,11 @@
 /**
  * MySQL Connector component
  *
- * @since 0.4
+ * @since 0.5
  * @author Bogomazov Bogdan (ASPIRIN++) <b.bogomazov@gamil.com>
  */
 return [
-    'db:mysql:_ver' => '0.4',
+    'db:mysql:_ver' => '0.5',
     'db:mysql:connections' => [],
     'db:mysql:connect' => function($h, $d, $u, $p) {
         //@todo Returns a MySQL link identifier on failure connection.
@@ -25,6 +25,9 @@ return [
         $name = is_int($name) ? array_keys($config)[$name] : $name;
         if (isset($config[$name])) {
             $app['components']['db:mysql:connections'][$name] = f('db:mysql:connect', $config[$name]['h'], $config[$name]['d'], $config[$name]['u'] ,$config[$name]['p']);
+            if(isset($config['charset'])) {
+                f('db:mysql:set_charset', $config['charset']);
+            }
             return TRUE;
         }
         return FALSE;
@@ -39,6 +42,16 @@ return [
             }
         }
         return $app['components']['db:mysql:connections'][$link];
+    },
+    'db:mysql:set_charset'=> function($charset, $link = 0) {
+        if(!is_resource($link) || get_resource_type($link) !== 'mysql link') {
+            $link = f('db:mysql:get_link', $link);
+        }
+        return function_exists('mysql_set_charset')
+            // MySQL 5.x
+            ?  mysql_set_charset($charset, $link)
+            // MySQL 4.x
+            : (bool) mysql_query('SET NAMES '.f('db:mysql:quote', $charset), $link);
     },
     'db:mysql:query' => function($sql, $params = [], $link = 0) {
         if(!is_resource($link) || get_resource_type($link) !== 'mysql link') {
