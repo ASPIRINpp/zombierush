@@ -98,9 +98,8 @@ return [
             // Do action
             $app['controller']["action:$action"](isset($params) ? $params : []);
         } else {
-            // @todo create error controller
             header("HTTP/1.0 404 Not Found");
+            f('core:view:render', 'error/index', ['code' => 404, 'msg' => 'Page not found!']);
         }
     }
 ];
-                
