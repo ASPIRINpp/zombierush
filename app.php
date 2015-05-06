@@ -53,14 +53,21 @@ function init($app_dir, $components_dir) {
     if (isset($app['config']['lang'])) {
         f('core:i18n:load_messages', $app['config']['lang']);
         if (!function_exists('__')) {
+
             function __($str, array $values = NULL, $lang = 'en-us') {
-                $str = $lang !== gc('lang') ?  f('core:i18n:get', $str) : $str;
+                $str = $lang !== gc('lang') ? f('core:i18n:get', $str) : $str;
                 return empty($values) ? $str : strtr($str, $values);
             }
+
         }
     }
+    /**
+     * Set locale
+     */
+    if (isset($app['config']['locale'])) {
+        setlocale(LC_ALL, $app['config']['locale']);
+    }
 }
-
 
 /**
  * @param $name
@@ -69,7 +76,7 @@ function init($app_dir, $components_dir) {
  */
 function _loader($name, $to = 'vendor') {
     global $app;
-    switch($to) {
+    switch ($to) {
         case 'components':
             $path = COM_PATH;
             break;
@@ -114,7 +121,11 @@ function _getter($f, $from) {
  * @todo refactoring this function
  */
 function _caller($f, $from, $args) {
-    return call_user_func_array(_getter($f, $from), $args);
+    $func = _getter($f, $from);
+    if (!is_callable($func)) {
+        trigger_error("The function $from:$f(" . implode(', ', $args) . ") is not callable!", E_USER_ERROR);
+    }
+    return call_user_func_array($func, $args);
 }
 
 /**
@@ -122,7 +133,7 @@ function _caller($f, $from, $args) {
  * @global array $app
  * @param string $name Component name
  */
-function lc ($name) {
+function lc($name) {
     _loader($name, 'components');
 }
 
@@ -136,7 +147,6 @@ function gc($key, $default = NULL) {
     global $app;
     return isset($app['config'][$key]) ? $app['config'][$key] : $default;
 }
-
 
 /**
  * Get any function from any component
