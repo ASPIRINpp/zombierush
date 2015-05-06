@@ -25,8 +25,8 @@ return [
         $name = is_int($name) ? array_keys($config)[$name] : $name;
         if (isset($config[$name])) {
             $app['components']['db:mysql:connections'][$name] = f('db:mysql:connect', $config[$name]['h'], $config[$name]['d'], $config[$name]['u'] ,$config[$name]['p']);
-            if(isset($config['charset'])) {
-                f('db:mysql:set_charset', $config['charset']);
+            if(isset($config[$name]['charset'])) {
+                f('db:mysql:set_charset', $config[$name]['charset']);
             }
             return TRUE;
         }
