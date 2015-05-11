@@ -2,6 +2,8 @@ function buildTower(pos) {
     pos[1] -= 16;
     pos[0] -= 16;
 
+    Game.money -= 200;
+
     var uid = Core.Npc.add({
         title: 'tower',
         health: 100,
@@ -90,8 +92,11 @@ function buildTower(pos) {
 
                 var in_radius = (L <= Rt);
                 if (in_radius)
-                {                   
+                {   
                     if(tower.reload == 0) {
+                        Core.Render.addObject((1000 * 3), function() {
+                            Core.Render.renderBallon(tower.title + ': ' + L, tower.pos, Core.ctx);
+                        });
                         zombies[k].events.damage(tower.params.attack);
                         tower.reload = tower.params.reloadTime;
                         break;

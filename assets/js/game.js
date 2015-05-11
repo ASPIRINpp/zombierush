@@ -34,7 +34,7 @@ var Game = {
     res: null,
     sroce: 0,
     money: 500,
-    onclick: function(){},
+    onclick: null,
     init: function() {
         // Set started times
         var now = Core.Time.now();
@@ -92,11 +92,16 @@ Core.onReady(function() {
 
         // Menu Events
         document.getElementById('content').onclick = function(e) {
-            //console.log('[' + e.layerX + ',' + e.layerY + ']');
-            Game.onclick([e.layerX, e.layerY]);
+            if(Game.onclick != null) {
+                Game.onclick([e.layerX, e.layerY]);
+                Game.onclick = null;
+            }
+            //Game.onclick([e.layerX, e.layerY]);
         };
-        document.getElementById('killAll').onclick = function(e) {
-            killAll();
+        document.getElementById('bt1').onclick = function(e) {
+            if (Game.money >= 200) {
+                Game.onclick = buildTower;
+            }
         };
         document.getElementById('startGame').onclick = function(e) {
             startTimer();

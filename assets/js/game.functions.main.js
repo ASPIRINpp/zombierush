@@ -7,9 +7,6 @@ function startTimer() {
     }, 25000);
 }
 
-Game.onclick = function(pos) {
-    buildTower(pos);
-};
 
 function createRoads() {
     Core.Roads.addPath('road', [

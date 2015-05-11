@@ -14,7 +14,7 @@
             | NPC: <span id="npcCount">0</span>
             | Money: <span id="moneyCount">0</span>
             | Kills: <span id="killsCount">0</span>
-            | <button id="killAll">kill all ($500)</button>
+            | <button id="bt1">Build tower</button>
         </div>
         <div id="content">
             <button style="min-width:100px; min-height: 60px; position: absolute; left: 350px; top: 240px;" id="startGame">Start game</button>
