@@ -2,7 +2,7 @@ var Core = {};
 
 (function() {
 
-    var CORE_PATH = '/js/core',
+    var CORE_PATH = '/assets/js/core',
             CORE_PREFIX = 'core.',
             MIN_PREFIX = '';
 

@@ -7,9 +7,10 @@ function buildTower(pos) {
         health: 100,
         speed: 1,
         radius: 100,
+        reload: 0,
         params:{
             attack: 50,
-            speed: 5,
+            reloadTime: 150,
         },
         sprite: {
             size: [32, 32],
@@ -70,7 +71,9 @@ function buildTower(pos) {
     // Update
     tower.events.update = function() {
         tower.render.radius();
-
+        if(tower.reload>0) {
+            tower.reload--;
+        }
         var zombies = Core.Npc.getAll();
         for (var k in zombies)
         {
@@ -88,7 +91,11 @@ function buildTower(pos) {
                 var in_radius = (L <= Rt);
                 if (in_radius)
                 {                   
-                    zombies[k].health -= tower.strength;
+                    if(tower.reload == 0) {
+                        zombies[k].events.damage(tower.params.attack);
+                        tower.reload = tower.params.reloadTime;
+                        break;
+                    }
                 }
             }
         }
@@ -112,7 +119,7 @@ function buildTower(pos) {
         Core.ctx.lineWidth = 1;
         Core.ctx.strokeStyle = '#8ED6FF';
         Core.ctx.stroke();
-    }
+    };
 
     var says = [
         'Tratatata!',

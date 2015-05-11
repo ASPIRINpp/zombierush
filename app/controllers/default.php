@@ -2,10 +2,7 @@
 
 return [
     'action:index' => function() {
-        f('core:view:render', 'default/index', ['msg' => 'Hello from controller!']);
-    },
-    'action:test' => function() {
-        echo 'Action test!';
+        f('core:view:render', 'default/index');
     }
 ];
         
