@@ -75,8 +75,11 @@
                     }
                     else
                     {
-                        //path.pos = -1;
+                        // Road end
                         path.pos = 0;
+                        if (typeof NPC.events.roadEnd !== 'undefined') {
+                            NPC.events.roadEnd();
+                        }
                     }
 
                     break;

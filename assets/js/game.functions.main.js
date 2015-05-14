@@ -2,9 +2,7 @@
  * Start game timer
  */
 function startTimer() {
-    setInterval(function() {
-        newWave(10);
-    }, 25000);
+    newWave(Game.waveCount);
 }
 
 
@@ -23,20 +21,33 @@ function createRoads() {
 }
 
 function newWave(count) {
+    Game.waveCount += 2;
+    document.getElementById('waveCount').innerHTML = Game.waveCount;
     var tmpFunction = function() {
-        console.log(count);
         count--;
-
         Core.Roads.applyRoadToNpc(createNpc('Zombie'), 'road');
-
-        if (count > 0)
-            setTimeout(tmpFunction, 1500);
-    }
-    setTimeout(tmpFunction, 1500)
-
+        if (count > 0) {
+            Core.Time.setTimeout(tmpFunction, 1500);
+        } else {
+            Core.Time.setTimeout(function() { newWave(Game.waveCount); }, 10500);
+        }
+    };
+    Core.Time.setTimeout(tmpFunction, 1500);
 }
 
 function createNpc(name) {
     var f = 'create' + name;
     return eval(f + '({pos: [276, -64]})');
+}
+
+/**
+ * 
+ * @returns {undefined}
+ */
+Game.pass = function() {
+    Game.life--;
+    if(Game.life === 0) {
+        Game.pause();
+        alert('Game over!');
+    }
 }

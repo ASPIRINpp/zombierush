@@ -140,6 +140,10 @@
      */
     Core.Time = {
         /**
+         * Active timers
+         */
+        timers:[],
+        /**
          * lastTime update
          */
         lastTime: 0,
@@ -179,6 +183,23 @@
          */
         sLT: function(t) {
             this.setLastTime(t);
+        },
+        /**
+         * Set timeout
+         * @returns {undefined}
+         */
+        setTimeout: function(callback, time) {
+            this.timers.push([this.now() + time, callback]);
+        },
+        updateTimers: function() {
+            var timers = this.timers,
+                    now = this.now();
+            for (var k = 0, count = timers.length; k < count; k++) {
+                if (typeof timers[k] !== 'undefined' && timers[k][0] <= now) {
+                    timers[k][1]();
+                    this.timers.splice(k, 1);
+                }
+            }
         }
     };
 

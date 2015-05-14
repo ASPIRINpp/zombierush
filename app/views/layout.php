@@ -13,8 +13,11 @@
             | FPS: <span id="fps">50</span>
             | NPC: <span id="npcCount">0</span>
             | Money: <span id="moneyCount">0</span>
+            | Life: <span id="lifeCount">0</span>
             | Kills: <span id="killsCount">0</span>
-            | <button id="bt1">Build tower</button>
+            | Next wave: <span id="waveCount">10</span>
+            | <button id="bt1">Tower ($200)</button>
+            <button id="btPause">Pause</button>
         </div>
         <div id="content">
             <button style="min-width:100px; min-height: 60px; position: absolute; left: 350px; top: 240px;" id="startGame">Start game</button>
