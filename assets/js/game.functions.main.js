@@ -21,11 +21,12 @@ function createRoads() {
 }
 
 function newWave(count) {
+    ++Game.wave;
     Game.waveCount += 2;
     document.getElementById('waveCount').innerHTML = Game.waveCount;
     var tmpFunction = function() {
         count--;
-        Core.Roads.applyRoadToNpc(createNpc('Zombie'), 'road');
+        Core.Roads.applyRoadToNpc(createZombie({pos: [276, -64], level: Game.wave-1}), 'road');
         if (count > 0) {
             Core.Time.setTimeout(tmpFunction, 1500);
         } else {
@@ -38,6 +39,10 @@ function newWave(count) {
 function createNpc(name) {
     var f = 'create' + name;
     return eval(f + '({pos: [276, -64]})');
+}
+
+function checkMouseEvents() {
+    
 }
 
 /**

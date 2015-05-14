@@ -16,7 +16,8 @@
             | Life: <span id="lifeCount">0</span>
             | Kills: <span id="killsCount">0</span>
             | Next wave: <span id="waveCount">10</span>
-            | <button id="bt1">Tower ($200)</button>
+            | <button id="bt1" title="Cost $200">T1</button>
+            | <button id="bt2" title="Cost $300">T2</button>
             <button id="btPause">Pause</button>
         </div>
         <div id="content">

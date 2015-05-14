@@ -1,8 +1,10 @@
 function createZombie(options) {
 
     var defaultOptions = {
+        level: 1,
         title: 'zombie',
-        cost: 7,
+        cost: 15,
+        maxHealth: 100,
         health: 100,
         speed: 24,
         sprite: {
@@ -29,6 +31,10 @@ function createZombie(options) {
         'Моя задница в огне',
     ];
 
+    // Level change
+    defaultOptions.health += Math.ceil(defaultOptions.health * (defaultOptions.level * 30) / 100);
+    defaultOptions.maxHealth += Math.ceil(defaultOptions.maxHealth * (defaultOptions.level * 30) / 100);
+    defaultOptions.cost += Math.ceil(defaultOptions.cost * (defaultOptions.level * 30) / 100);
 
     CH.merge(defaultOptions, options);
 
@@ -54,6 +60,12 @@ function createZombie(options) {
 
     // Update events
     zombie.events.update = function() {
+        var mousePos = Game.mouse,
+            npcPos = zombie.pos;
+        if ((npcPos[0] <= mousePos[0] && npcPos[0] + 64 >= mousePos[0])
+                && (npcPos[1] <= mousePos[1] && npcPos[1] + 64 >= mousePos[1])) {
+                zombie.render.health();
+        }
         
         if (zombie.health <= 0)
         {
@@ -106,9 +118,6 @@ function createZombie(options) {
      */
     zombie.events.damage = function(hp) {
         zombie.health -= hp;
-        Core.Render.addObject((1000 * 2), function() {
-            Core.Render.renderBallon(zombie.title + ': -'+hp, zombie.pos, Core.ctx);
-        });
     };
 
 
@@ -124,6 +133,19 @@ function createZombie(options) {
                 Core.Render.renderBallon(npc.title + ': ' + text, npc.pos, Core.ctx);
             });
         }
+    };
+    
+    zombie.render = {};
+    zombie.render.health = function () {
+        var h = 4, 
+                w = 32, 
+                precent = Math.ceil(zombie.health*100/zombie.maxHealth),
+                npcPos = zombie.pos;
+        Core.ctx.beginPath();
+        Core.ctx.fillStyle = "#000000";
+        Core.ctx.fillRect(npcPos[0]+16, npcPos[1], w, h);
+        Core.ctx.fillStyle = "#FF0000";
+        Core.ctx.fillRect(npcPos[0]+16, npcPos[1], w * precent / 100, h);
     };
 
     return uid;
