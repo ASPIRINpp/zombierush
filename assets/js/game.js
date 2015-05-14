@@ -2,7 +2,7 @@
  * Directories
  */
 var DIR = {
-    assets:'/assets/',
+    assets: '/assets/',
     sprites: '/assets/sprites/',
     js: '/assets/js/'
 }
@@ -12,18 +12,18 @@ var DIR = {
  */
 var SPRITES = {
     terrain: {
-        grass: DIR.sprites+'terrain/grass.png',
-        dirt: DIR.sprites+'terrain/dirt.png',
-        grass2: DIR.sprites+'terrain/grass2.png',
-        grass3: DIR.sprites+'terrain/grass3.png',
-        grass4: DIR.sprites+'terrain/grass4.png'
+        grass: DIR.sprites + 'terrain/grass.png',
+        dirt: DIR.sprites + 'terrain/dirt.png',
+        grass2: DIR.sprites + 'terrain/grass2.png',
+        grass3: DIR.sprites + 'terrain/grass3.png',
+        grass4: DIR.sprites + 'terrain/grass4.png'
     },
-    road: DIR.sprites+'roads/map1.png',
+    road: DIR.sprites + 'roads/map1.png',
     npc: {
-        zombie: DIR.sprites+'npc/zombie.png',
-        tower: DIR.sprites+'npc/tower.png',
-        zombieRed: DIR.sprites+'npc/zombierRed.png',
-        marine: DIR.sprites+'npc/marineEnd.png'
+        zombie: DIR.sprites + 'npc/zombie.png',
+        tower: DIR.sprites + 'npc/tower.png',
+        zombieRed: DIR.sprites + 'npc/zombierRed.png',
+        marine: DIR.sprites + 'npc/marineEnd.png'
     }
 };
 
@@ -32,9 +32,18 @@ var SPRITES = {
  */
 var Game = {
     res: null,
+    // Count of max pass zombies
+    life: 20,
+    // Count of zomies kills
     sroce: 0,
+    // Money
     money: 500,
+    // Click on canvas
     onclick: null,
+    // Game pause
+    pause: false,
+    waveCount: 10,
+    // Init game
     init: function() {
         // Set started times
         var now = Core.Time.now();
@@ -62,12 +71,12 @@ Core.onReady(function() {
     // Include game js
     CC.grpC('Game loading ');
     console.log('>>>>>>>>Game loading...');
-    Core.includeJs(DIR.js+'game.functions.main.js');
-    Core.includeJs(DIR.js+'game.functions.menu.js');
-    Core.includeJs(DIR.js+'game.npc.zombie.js');
-    Core.includeJs(DIR.js+'game.build.tower.js');
-    Core.includeJs(DIR.js+'game.npc.redZombie.js');
-    Core.includeJs(DIR.js+'input.js');
+    Core.includeJs(DIR.js + 'game.functions.main.js');
+    Core.includeJs(DIR.js + 'game.functions.menu.js');
+    Core.includeJs(DIR.js + 'game.npc.zombie.js');
+    Core.includeJs(DIR.js + 'game.build.tower.js');
+    Core.includeJs(DIR.js + 'game.npc.redZombie.js');
+    Core.includeJs(DIR.js + 'input.js');
 
     // Create the canvas
     var content = document.getElementById('content');
@@ -92,7 +101,7 @@ Core.onReady(function() {
 
         // Menu Events
         document.getElementById('content').onclick = function(e) {
-            if(Game.onclick != null) {
+            if (Game.onclick != null) {
                 Game.onclick([e.layerX, e.layerY]);
                 Game.onclick = null;
             }
@@ -101,6 +110,15 @@ Core.onReady(function() {
         document.getElementById('bt1').onclick = function(e) {
             if (Game.money >= 200) {
                 Game.onclick = buildTower;
+            }
+        };
+        document.getElementById('btPause').onclick = function(e) {
+            if (Game.pause) {
+                Game.pause = false;
+                this.innerHTML = 'Pause';
+            } else {
+                Game.pause = true;   
+                this.innerHTML = 'Start';
             }
         };
         document.getElementById('startGame').onclick = function(e) {
@@ -115,6 +133,12 @@ Core.onReady(function() {
 
 
 function update(dt) {
+    // Check pause
+    if(Game.pause) {
+        return true;
+    }
+    
+    Core.Time.updateTimers();
     var CoreNpc = Core.Npc,
             Helper = CH,
             CoreRoads = Core.Roads;
@@ -139,7 +163,6 @@ function main() {
             dt = CoreTime.dt();
 
     update(dt);
-
     CoreTime.sLT(now);
     requestAnimFrame(main);
 }

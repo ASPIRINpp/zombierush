@@ -2,7 +2,7 @@ function createZombie(options) {
 
     var defaultOptions = {
         title: 'zombie',
-        cost: 5,
+        cost: 7,
         health: 100,
         speed: 24,
         sprite: {
@@ -66,7 +66,12 @@ function createZombie(options) {
 
     };
 
-    // Before die event
+    /**
+     * Before die event
+     * @param {type} npc
+     * @param {type} dt
+     * @returns {undefined}
+     */
     zombie.events.beforeDie = function(npc, dt) {
         if (CH.randInt(0, 15000) === CH.randInt(0, 15000)) {
             var text = lastSays[CH.randInt(0, lastSays.length - 1)];
@@ -76,11 +81,29 @@ function createZombie(options) {
         }
     };
 
-    // Destroy event
+    
+    /**
+     * Road end event
+     * @returns {undefined}
+     */
+    zombie.events.roadEnd = function() {
+        Game.pass();
+        Core.Npc.destroy(uid);
+    };
+    
+    /**
+     * Event before destroy npc object
+     * @returns {undefined}
+     */
     zombie.events.destroy = function() {
         
     };
     
+    /**
+     * Damage for npc
+     * @param {type} hp
+     * @returns {undefined}
+     */
     zombie.events.damage = function(hp) {
         zombie.health -= hp;
         Core.Render.addObject((1000 * 2), function() {

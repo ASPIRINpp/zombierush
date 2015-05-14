@@ -40,7 +40,8 @@ function renderMenu() {
     var fpsOut = document.getElementById('fps'),
             npcCount = document.getElementById('npcCount'),
             money = document.getElementById('moneyCount'),
-            kills = document.getElementById('killsCount');
+            kills = document.getElementById('killsCount'),
+            life = document.getElementById('lifeCount');
 
     setInterval(function()
     {
@@ -48,6 +49,6 @@ function renderMenu() {
         npcCount.innerHTML = Core.Npc.getAll().length;
         money.innerHTML = Game.money;
         kills.innerHTML = Game.sroce;
-
+        life.innerHTML = Game.life;
     }, 1000);
 }
