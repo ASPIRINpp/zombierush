@@ -61,8 +61,9 @@ var Core = {};
                 _onReady[k]();
             _onReady = [];
         },
-        createCanvas: function() {
+        createCanvas: function(id) {
             var canvas = document.createElement("canvas");
+            canvas.id = id;
             Core.ctx = canvas.getContext("2d");
             canvas.width = 800;
             canvas.height = 600;

@@ -22,6 +22,7 @@ var SPRITES = {
     npc: {
         zombie: DIR.sprites + 'npc/zombie.png',
         tower: DIR.sprites + 'npc/tower.png',
+        towerR: DIR.sprites + 'npc/towerR.png',
         zombieRed: DIR.sprites + 'npc/zombierRed.png',
         marine: DIR.sprites + 'npc/marineEnd.png'
     }
@@ -37,11 +38,16 @@ var Game = {
     // Count of zomies kills
     sroce: 0,
     // Money
-    money: 500,
+    money: 450,
     // Click on canvas
     onclick: null,
     // Game pause
     pause: false,
+    // Mouse pos
+    mouse: [0,0],
+    // Waves count
+    wave: 0,
+    // Wave zombies count
     waveCount: 10,
     // Init game
     init: function() {
@@ -75,17 +81,20 @@ Core.onReady(function() {
     Core.includeJs(DIR.js + 'game.functions.menu.js');
     Core.includeJs(DIR.js + 'game.npc.zombie.js');
     Core.includeJs(DIR.js + 'game.build.tower.js');
+    Core.includeJs(DIR.js + 'game.build.towerR.js');
     Core.includeJs(DIR.js + 'game.npc.redZombie.js');
     Core.includeJs(DIR.js + 'input.js');
 
     // Create the canvas
-    var content = document.getElementById('content');
-    content.appendChild(Core.createCanvas());
+    var content = document.getElementById('content'),
+        canvas = Core.createCanvas('gameCanvas');
+    content.appendChild(canvas);
     // End Create the canvas
 
     // Loading resouce
     Game.res.load([
         SPRITES.npc.tower,
+        SPRITES.npc.towerR,
         SPRITES.npc.zombie,
         SPRITES.npc.zombieRed,
         SPRITES.terrain.grass4,
@@ -100,16 +109,24 @@ Core.onReady(function() {
 
 
         // Menu Events
-        document.getElementById('content').onclick = function(e) {
+        canvas.onclick = function(e) {
             if (Game.onclick != null) {
                 Game.onclick([e.layerX, e.layerY]);
                 Game.onclick = null;
             }
             //Game.onclick([e.layerX, e.layerY]);
         };
+        canvas.onmousemove = function(e) {
+                Game.mouse = [e.layerX, e.layerY];
+        };
         document.getElementById('bt1').onclick = function(e) {
             if (Game.money >= 200) {
                 Game.onclick = buildTower;
+            }
+        };
+        document.getElementById('bt2').onclick = function(e) {
+            if (Game.money >= 300) {
+                Game.onclick = buildTowerR;
             }
         };
         document.getElementById('btPause').onclick = function(e) {
@@ -166,3 +183,12 @@ function main() {
     CoreTime.sLT(now);
     requestAnimFrame(main);
 }
+
+/**
+ * Game paused on window blur
+ * @returns {undefined}
+ */
+window.onblur = function() {
+//    Game.pause = true;   
+//    document.getElementById('btPause').innerHTML = 'Start';
+};

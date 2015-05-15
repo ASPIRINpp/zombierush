@@ -1,4 +1,4 @@
-function buildTower(pos) {
+function buildTowerR(pos) {
     pos[1] -= 16;
     pos[0] -= 16;
 
@@ -11,12 +11,12 @@ function buildTower(pos) {
         radius: 100,
         reload: 0,
         params:{
-            attack: 50,
-            reloadTime: 150,
+            attack: 65,
+            reloadTime: 130
         },
         sprite: {
             size: [32, 32],
-            resourceUrl: SPRITES.npc.tower,
+            resourceUrl: SPRITES.npc.towerR,
             frames: [0, 1, 2, 3, 4, 5, 6, 7],
             once: false
         },

@@ -51,9 +51,12 @@
     function moveNPC(npcUid, path) {
 
         var NPC = Core.Npc.get(npcUid), road = getRoad(path.uid);
-
-        if (path.pos != -1)
-        {
+        
+        if (typeof NPC === 'undefined' || typeof road === 'undefined'){
+            return false;
+        }
+        
+        if (path.pos != -1) {
             var px = Math.floor(NPC.pos[0]) + Math.floor(NPC.sprite.size[0] / 2);
             var py = Math.floor(NPC.pos[1]) + NPC.sprite.size[1] - 5;
 
